@@ -1,0 +1,16 @@
+{
+    "name": "tomi20v/phalswag",
+    "description": "description_text",
+    "version": "0.1.0",
+    "minimum-stability": "stable",
+    "license": "wtfpl",
+    "authors": [
+        {
+            "name": "t",
+            "email": "tomi20v@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "tomi20v\\phalswag\\": "src/" }
+    }
+}
