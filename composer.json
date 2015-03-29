@@ -1,6 +1,6 @@
 {
     "name": "tomi20v/phalswag",
-    "description": "description_text",
+    "description": "phalswag is a component for the Phalcon framework, that validates incoming HTTP requests against a swagger.json schema",
     "version": "0.1.0",
     "minimum-stability": "stable",
     "license": "wtfpl",
