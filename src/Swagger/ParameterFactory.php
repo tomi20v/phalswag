@@ -23,23 +23,26 @@ class ParameterFactory {
 	 */
 	protected static function _getParameterClassName(\Phalcon\Config $SwaggerParameter) {
 
-		$classNameBase = get_called_class();
-		if ($pos = strrpos($classNameBase, '\\')) {
-			$classNameBase = substr($classNameBase, 0, $pos+1);
+		$nameSpacePart = get_called_class();
+		if ($pos = strrpos($nameSpacePart, '\\')) {
+			$nameSpacePart = substr($nameSpacePart, 0, $pos+1);
 		}
-		else $classNameBase = '';
+		else $nameSpacePart = '';
 
 		$typePart = null;
 		if (isset($SwaggerParameter->type) && preg_match(static::$_classTypePattern, $SwaggerParameter->type)) {
 			$typePart = static::_niceClassNamePart($SwaggerParameter->type);
 		}
-		$classNames = [$classNameBase . 'EntityAbstract', 'EntityAbstract'];
+
+		$classNames = [
+			$nameSpacePart . 'Parameter\\Entity\\Entity',
+			'Parameter\\Entity\\Entity',
+		];
 		if ($typePart) {
-			$classNames[] = $classNameBase . 'EntityAbstract' . $typePart;
-			$classNames[] = 'EntityAbstract' . $typePart;
+			$classNames[] = $nameSpacePart . 'Parameter\\Entity\Entity' . $typePart;
+			$classNames[] = 'Parameter\\Entity\Entity' . $typePart;
 		}
 		$classNames = array_reverse($classNames);
-		throw new \Exception('REVISE');
 
 		foreach ($classNames as $eachClassName) {
 			if (class_exists($eachClassName)) {

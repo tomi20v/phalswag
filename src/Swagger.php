@@ -32,7 +32,7 @@ class Swagger {
 		foreach ($Config->paths as $eachPath=>$EachPathData) {
 			foreach ($EachPathData as $eachMethod=>$EachMethodData) {
 				if (isset($EachMethodData['operationId']) && ($EachMethodData->operationId == $operationId)) {
-					return new SwaggerOperationOptions($eachPath, $eachMethod, $EachMethodData, $Config);
+					return new Swagger\OperationOptions($eachPath, $eachMethod, $EachMethodData, $Config);
 				}
 			}
 		}
@@ -45,7 +45,7 @@ class Swagger {
 	 * @param $RootConfig
 	 */
 	public function getOperation($SwaggerOptions) {
-		return new \tomi20v\phalswag\swagger\Operation($SwaggerOptions);
+		return new Swagger\Operation($SwaggerOptions);
 	}
 
 	/**
@@ -53,7 +53,7 @@ class Swagger {
 	 * @return Reader
 	 */
 	public function getReader() {
-		return new \tomi20v\phalswag\swagger\Reader($this->_configPath);
+		return new Swagger\Reader($this->_configPath);
 	}
 
 	/**
