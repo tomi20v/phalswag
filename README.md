@@ -10,10 +10,10 @@ class ArticleController extends ControllerBase
 		$Article = new \Article;
 
 		// getArticleBySlug is the operation ID in swagger.json (note path parameter $slug doesn't have to be passed)
-		$Operation = $this->_getBoundSwaggerAction('getArticleBySlug', $Action);
+		$Operation = $this->_getBoundSwaggerAction('getArticleBySlug', $Article);
 
 		if (!$Operation->isValid()) {
-			$Response = $this->buildResponse(false, $Operation->getValidationMessages());
+			$Response = $this->$ResponseBuilder->buildResponse(false, $Operation->getValidationMessages());
 		}
 		else {
 
@@ -22,8 +22,8 @@ class ArticleController extends ControllerBase
 			$Article->refresh();
 
 			$Response = is_null($Article->title)
-				? $this->buildResponse(false, ['_'=>'404'])
-				: $this->buildResponse(true, $Article->toArray(null));
+				? $this->$ResponseBuilder->buildResponse(false, ['_'=>'404'])
+				: $this->$ResponseBuilder->buildResponse(true, $Article->toArray(null));
 
 		}
 

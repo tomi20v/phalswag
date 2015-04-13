@@ -64,6 +64,9 @@ class Operation extends \Phalcon\Di\Injectable implements \Iterator {
 
 		$data = [];
 
+		/**
+		 * @var \tomi20v\phalswag\Swagger\Parameter\EntityAbstract $EachParameter
+		 */
 		foreach ($this->_SwaggerParameters as $EachParameter) {
 
 			if ($EachParameter->fetch($pathParams, $Request)) {
@@ -81,6 +84,7 @@ class Operation extends \Phalcon\Di\Injectable implements \Iterator {
 					}
 				}
 			}
+
 		}
 
 		$this->_data = $data;

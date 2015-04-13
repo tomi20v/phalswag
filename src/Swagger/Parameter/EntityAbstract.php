@@ -115,12 +115,12 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 			}
 			break;
 		case 'query':
-			$this->_hasFetched = $Request->getQuery($name, [], 0) == $Request->getQuery($name, [], 1);
+			$this->_hasFetched = $Request->hasQuery($name);
 			$this->setValue($Request->getQuery($name, $filters, null));
 			break;
 		case 'header':
 			// this syntax won't work... yet???
-			//$value = $Request->getHeader($name, $filters, NAN);
+			//$value = $Request->getHeader($name, $filters, null);
 			$nameWithHttpPrefix = strtoupper(str_replace('-', '_', $name));
 			if ($Request->hasServer($name) || $Request->hasServer($nameWithHttpPrefix)) {
 				// @todo apply filters
@@ -129,17 +129,17 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 			}
 			break;
 		case 'form':
-			switch ($Request->getMethod()) {
+			switch (strtolower($Request->getMethod())) {
 			case 'post':
 				if ($Request->hasPost($name)) {
 					$this->_hasFetched = true;
-					$this->value = $Request->getPost($name, $filters, null);
+					$this->setValue($Request->getPost($name, $filters, null));
 				}
 				break;
 			case 'put':
 				if ($Request->hasPut($name)) {
 					$this->_hasFetched = true;
-					$this->value = $Request->getPut($name, $filters, null);
+					$this->setValue($Request->getPut($name, $filters, null));
 				}
 				break;
 				// parameters on delete request not supported yet
@@ -147,6 +147,7 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 			default:
 				throw new \Exception('TBI: ' . $Request->getMethod());
 			}
+			break;
 		case 'body':
 			throw new \Exception('TBI');
 			break;

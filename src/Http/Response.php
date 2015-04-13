@@ -2,6 +2,9 @@
 
 namespace tomi20v\phalswag\Http;
 
+use Phalcon\Http\jsonOptions;
+use Phalcon\Http\content;
+
 /**
  * Class Response
  *
@@ -47,12 +50,22 @@ class Response extends \Phalcon\Http\Response {
 		return $this->addErrors([ $field => $error ]);
 	}
 
+	public function setResult($result) {
+		$this->_rawContent['result'] = $result;
+		return $this->_refreshContent();
+	}
+
 	public function setMeta($meta) {
-		if (!isset($this->_rawContent['meta'])) {
-			$this->_rawContent['meta'] = [];
+		if (is_null($meta)) {
+			unset($this->_rawContent['meta']);
 		}
-		foreach ($meta as $eachKey=>$eachmeta) {
-			$this->_rawContent['meta'][$eachKey] = $eachmeta;
+		else {
+			if (!array_key_exists('meta', $this->_rawContent)) {
+				$this->_rawContent['meta'] = [];
+			}
+			foreach ($meta as $eachKey=>$eachmeta) {
+				$this->_rawContent['meta'][$eachKey] = $eachmeta;
+			}
 		}
 		return $this->_refreshContent();
 	}
