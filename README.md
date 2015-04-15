@@ -1,5 +1,5 @@
 phalswag is a component for the Phalcon framework, to validate incoming HTTP request against a swagger.json schema
-the goal is to automatize creating REST APIs
+the goal is to automate writing REST APIs as much as possible based on swagger definitions
 
 example code:
 ```
@@ -33,4 +33,5 @@ class ArticleController extends ControllerBase
 
 ```
 
-current status: phalswag can validate single input but not structures in body. it cannot resolve $ref 's.
+current status: phalswag can validate some type of input but not structures in body. it cannot resolve $ref 's.
+
