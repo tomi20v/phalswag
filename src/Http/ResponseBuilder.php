@@ -10,11 +10,21 @@ namespace tomi20v\phalswag\Http;
  */
 class ResponseBuilder {
 
-	public function build($success, $dataOrErrors, $metaOrCnt=null) {
+	/**
+	 * @param array|int $metaOrCnt
+	 * @return array
+	 */
+	protected function _transformMetaOrCnt($metaOrCnt) {
 		if (is_numeric($metaOrCnt) && (intval($metaOrCnt) == $metaOrCnt)) {
-			$metaOrCnt = ['cnt' => $metaOrCnt];
+			$ret = ['cnt' => $metaOrCnt];
 		}
-		die('HOO');
+		else {
+			$ret = $metaOrCnt;
+		}
+		return $ret;
+	}
+
+	public function build($success, $dataOrErrors, $metaOrCnt=null) {
 		$Response = $success
 			? $this->buildSuccess($dataOrErrors, $metaOrCnt)
 			: $this->buildError(null, $dataOrErrors, null, $metaOrCnt);
@@ -26,7 +36,7 @@ class ResponseBuilder {
 		$Response
 			->setSuccess(true)
 			->setResult($result)
-			->setMeta($metaOrCnt);
+			->setMeta($this->_transformMetaOrCnt($metaOrCnt));
 		return $Response;
 	}
 
@@ -41,7 +51,7 @@ class ResponseBuilder {
 		$Response
 			->setSuccess(false)
 			->setResult($result)
-			->setMeta($metaOrCnt);
+			->setMeta($this->_transformMetaOrCnt($metaOrCnt));
 
 		if (!is_null($errors)) {
 			$Response->addErrors($errors);
@@ -76,7 +86,7 @@ class ResponseBuilder {
 		$Response
 			->setStatusCode(401, null)
 			->setResult($result)
-			->setMeta($metaOrCnt);
+			->setMeta($this->_transformMetaOrCnt($metaOrCnt));
 	}
 
 	public function buildHttp404($errors=null, $result=null) {
