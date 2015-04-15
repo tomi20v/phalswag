@@ -3,7 +3,8 @@
 namespace tomi20v\phalswag\Http;
 
 /**
- * Class ResponseBuilder
+ * Class ResponseBuilder - build REST responses. Note that all these responses are rest responses, the http* ones
+ * 		map to the proper rest structure
  *
  * @package tomi20v\phalswag
  */

@@ -91,29 +91,70 @@ class EntityArray extends EntityAbstract {
 		}
 	}
 
+	protected function _getItemsParameterEntity() {
+		static $ItemsParameterEntity;
+		if (is_null($ItemsParameterEntity)) {
+			$ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_SwaggerConfig->items, null);
+		}
+		return $ItemsParameterEntity;
+	}
+
+	/**
+	 * I build filter functions based on $this->_SwaggerConfig->collectionFormat
+	 */
 	protected function _buildFilters() {
+
+//		if (!isset($this->_SwaggerConfig->collectionFormat)) {
+//			throw new \Exception('missing property: collectionFormat');
+//		}
+
 		parent::_buildFilters();
-		throw new \Exception('TBI');
-		$this->_filters[] = function($value) {
-			if (is_array($value));
-			else {
-				switch ($this->_SwaggerConfig->collectionFormat) {
+
+		$collectionFormat = isset($this->_SwaggerConfig->collectionFormat)
+			? $this->_SwaggerConfig->collectionFormat
+			: 'csv';
+
+		// first filter will cut $value to array if necessary
+		$this->_filters[] = function($value) use ($collectionFormat) {
+			if (is_null($value));
+			elseif (is_array($value) && ($collectionFormat == 'multi')) {
+				throw new \Exception('MULTI');
+			}
+			elseif (is_string($value)) {
+				switch ($collectionFormat) {
+				case 'ssv':
+					$value = explode(' ', $value);
+					break;
+				case 'tsv':
+					$value = explode('\\', $value);
+					break;
+				case 'pipes':
+					$value = explode('|', $value);
+					break;
 				case 'csv':
+				default:
 					$value = explode(',', $value);
+					break;
 				}
 			}
+			else {
+				throw new \Exception('could not apply collectionFormat: ' . $collectionFormat);
+			}
+			return $value;
 		};
-		$ItemsParameterEntity = $this->_ItemsParameterEntity;
+
+		// I'll run each value through the pseudo-param entity's filter by setting the value and getting it back
+//		$ItemsParameterEntity = $this->_ItemsParameterEntity;
+		$ItemsParameterEntity = $this->_getItemsParameterEntity();
 		$this->_filters[] = function($value) use ($ItemsParameterEntity) {
 			// @todo here I have to call validation of $this->_ItemsParameterEntity on every $eachItem
-			debug_print_backtrace();
-			die('HOLOKI');
-			foreach ($value as $eachValue) {
-				if (!$ItemsParameterEntity->validate($eachValue)) {
-					return false;
+			if (is_array($value)) {
+				foreach ($value as &$eachValue) {
+					$ItemsParameterEntity->setValue($eachValue);
+					$eachValue = $ItemsParameterEntity->getValue();
 				}
 			}
-			return true;
+			return $value;
 		};
 	}
 

@@ -71,16 +71,18 @@ class Operation extends \Phalcon\Di\Injectable implements \Iterator {
 
 			if ($EachParameter->fetch($pathParams, $Request)) {
 
-				$data[$EachParameter->getName()] = $EachParameter->getValue();
+				$name = $EachParameter->getName();
+
+				$data[$name] = $EachParameter->getValue();
 
 				if (is_null($Model) || ($whitelist && !in_array($EachParameter->name, $whitelist)));
 				else {
-					$setterMethod = 'set' . ucfirst($EachParameter->getName());
+					$setterMethod = 'set' . ucfirst($name);
 					if (method_exists($Model, $setterMethod)) {
 						call_user_func([$Model, $setterMethod], $EachParameter->getValue());
 					}
 					else {
-						$Model->{$name} = $EachParameter->getValue();
+						$Model->$name = $EachParameter->getValue();
 					}
 				}
 			}

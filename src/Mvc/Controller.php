@@ -4,6 +4,7 @@ namespace tomi20v\phalswag\Mvc;
 
 use Phalcon\Http\Response;
 use Phalcon\Mvc\Model;
+use tomi20v\phalswag\Swagger\Operation;
 
 /**
  * Class Controller
@@ -52,7 +53,7 @@ abstract class Controller extends \Phalcon\Mvc\Controller {
 	 *
 	 * @param $operationId
 	 * @param Model $Model
-	 * @return Response
+	 * @return Operation
 	 */
 	protected function _getBoundSwaggerAction($operationId, Model $Model) {
 

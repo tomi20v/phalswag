@@ -110,7 +110,6 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 		case 'path':
 			if (array_key_exists($name, $pathParams)) {
 				$this->_hasFetched = true;
-				// @todo apply filters
 				$this->setValue($pathParams[$name]);
 			}
 			break;
@@ -123,12 +122,11 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 			//$value = $Request->getHeader($name, $filters, null);
 			$nameWithHttpPrefix = strtoupper(str_replace('-', '_', $name));
 			if ($Request->hasServer($name) || $Request->hasServer($nameWithHttpPrefix)) {
-				// @todo apply filters
 				$this->setValue($Request->getHeader($name));
 				$this->_hasFetched = true;
 			}
 			break;
-		case 'form':
+		case 'formData':
 			switch (strtolower($Request->getMethod())) {
 			case 'post':
 				if ($Request->hasPost($name)) {
@@ -152,7 +150,7 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 			throw new \Exception('TBI');
 			break;
 		default:
-			throw new \Exception('not implemented: ' . $this->_SwaggerConfig->in);
+			throw new \Exception('invalid or not implemented "in" value: ' . $this->_SwaggerConfig->in);
 		}
 
 		return $this->_hasFetched;
