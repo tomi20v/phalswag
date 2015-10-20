@@ -188,13 +188,13 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 		$this->_validators = [];
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterRequired
 		if (isset($this->_SwaggerConfig->required) && $this->_SwaggerConfig->required) {
-			$this->_validators['required'] = $this->ValidatorFactory->buildValidator('PresenceOf');
+			$this->_validators['required'] = $this->SwaggerService->buildValidator('PresenceOf');
 		}
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterEnum
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor76
 		if (isset($this->_SwaggerConfig->enum)) {
 			$enum = $this->_SwaggerConfig->enum;
-			$this->_validators['enum'] = $this->ValidatorFactory->buildValidator(
+			$this->_validators['enum'] = $this->SwaggerService->buildValidator(
 				'InclusionIn',
 				[
 					'message' => 'expected values to be in ' . implode(',', $enum),

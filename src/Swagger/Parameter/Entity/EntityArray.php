@@ -24,7 +24,7 @@ class EntityArray extends EntityAbstract {
 		if (!isset($this->_SwaggerConfig->items)) {
 			throw new \Exception('missing property: items');
 		}
-		$this->_ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_SwaggerConfig->items, null);
+		$this->_ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_SwaggerConfig->items);
 	}
 
 	protected function _buildValidators() {
@@ -94,17 +94,17 @@ class EntityArray extends EntityAbstract {
 	protected function _getItemsParameterEntity() {
 		static $ItemsParameterEntity;
 		if (is_null($ItemsParameterEntity)) {
-			$ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_SwaggerConfig->items, null);
+			$ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_SwaggerConfig->items);
 		}
 		return $ItemsParameterEntity;
 	}
 
 	/**
-	 * I build filter functions based on $this->_SwaggerConfig->collectionFormat
+	 * I build filter functions based on $this->_Swagger->collectionFormat
 	 */
 	protected function _buildFilters() {
 
-//		if (!isset($this->_SwaggerConfig->collectionFormat)) {
+//		if (!isset($this->_Swagger->collectionFormat)) {
 //			throw new \Exception('missing property: collectionFormat');
 //		}
 
@@ -144,7 +144,6 @@ class EntityArray extends EntityAbstract {
 		};
 
 		// I'll run each value through the pseudo-param entity's filter by setting the value and getting it back
-//		$ItemsParameterEntity = $this->_ItemsParameterEntity;
 		$ItemsParameterEntity = $this->_getItemsParameterEntity();
 		$this->_filters[] = function($value) use ($ItemsParameterEntity) {
 			// @todo here I have to call validation of $this->_ItemsParameterEntity on every $eachItem

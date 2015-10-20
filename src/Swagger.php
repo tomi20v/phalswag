@@ -2,66 +2,53 @@
 
 namespace tomi20v\phalswag;
 
+use Phalcon\Config;
+use tomi20v\phalswag\Swagger\Operation;
+
 /**
  * Class Swagger - maybe I should be renamed to Helper...
  *
  * @package tomi20v\phalswag
  */
-class Swagger {
+class Swagger extends AbstractItem {
 
-	/**
-	 * @var string path to the swagger config folder
-	 */
-	protected $_configPath;
+	/** @var Config */
+	protected $_data;
 
-	/**
-	 * @param $Config
-	 * @param $what
-	 * @param $RootConfig
-	 */
-	public function resolve($Config, $what, $RootConfig) {
-		// todo here I shall extend structures which contain $ref reference!?
-	}
+	protected static $_fields = [
+		'swagger',
+		'info' => 'SwaggerInfo',
+		'host',
+		'basePath',
+		'schemes',
+		'consumes',
+		'produces',
+		'paths' => 'Paths',
+		'definitions' => 'Definitions',
+		'parameters' => 'Parameters',
+		'responses' => 'Responses',
+		'securityDefinitions' => 'SecurityDefinitions',
+		'security' => 'Security',
+		'tags' => 'Tags',
+		'externalDocs' => 'ExternalDocs',
+	];
 
-	/**
-	 * @param $Config
-	 * @param $operationId
-	 * @return array|null
-	 */
-	public function findOperationConfigById($Config, $operationId) {
-		foreach ($Config->paths as $eachPath=>$EachPathData) {
-			foreach ($EachPathData as $eachMethod=>$EachMethodData) {
-				if (isset($EachMethodData['operationId']) && ($EachMethodData->operationId == $operationId)) {
-					return new Swagger\OperationOptions($eachPath, $eachMethod, $EachMethodData, $Config);
+	public function getOperationById($operationId) {
+		$className = static::CHILD_CLASS_NAMESPACE . 'Operation';
+		foreach ($this->_data->paths as $eachPathKey => &$EachPath) {
+			/** @var Operation $EachOperation */
+			foreach ($EachPath as $each_operation_key => &$EachOperation){
+				if (isset($EachOperation->operationId) && $EachOperation->operationId == $operationId) {
+					$Operation = $EachOperation;
+					if (!$Operation instanceof $className) {
+						$Operation = new $className($Operation, $eachPathKey, $each_operation_key);
+						$EachOperation = $Operation;
+					}
+					return $Operation;
 				}
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * @param $Config
-	 * @param $what
-	 * @param $RootConfig
-	 */
-	public function getOperation($SwaggerOptions) {
-		return new Swagger\Operation($SwaggerOptions);
-	}
-
-	/**
-	 * I return Reader instance
-	 * @return Reader
-	 */
-	public function getReader() {
-		return new Swagger\Reader($this->_configPath);
-	}
-
-	/**
-	 * @param string $configPath
-	 * @see $this->_configPath
-	 */
-	public function __construct($configPath) {
-		$this->_configPath = $configPath;
 	}
 
 }

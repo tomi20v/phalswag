@@ -2,6 +2,8 @@
 
 namespace tomi20v\phalswag\Swagger;
 
+use Phalcon\Config;
+
 /**
  * Class ParameterFactory
  *
@@ -17,11 +19,11 @@ class ParameterFactory {
 
 	/**
 	 * I return class to be instantiated
-	 * @param \Phalcon\Config $SwaggerParameter
+	 * @param Config $SwaggerParameter
 	 * @return string
 	 * @throws \Exception
 	 */
-	protected static function _getParameterClassName(\Phalcon\Config $SwaggerParameter) {
+	protected static function _getParameterClassName(Config $SwaggerParameter) {
 
 		$nameSpacePart = get_called_class();
 		if ($pos = strrpos($nameSpacePart, '\\')) {
@@ -57,13 +59,12 @@ class ParameterFactory {
 
 	/**
 	 * I build the parameter object, and inject fetch strategy
-	 * @param \Phalcon\Config $SwaggerParameter
-	 * @param \Phalcon\Config $SwaggerConfig - I need it to resolve refs
+	 * @param Config $SwaggerParameter
+	 * @param Config $SwaggerConfig - I need it to resolve refs
 	 * @return \tomi20v\phalswag\ParameterInstance
 	 */
 	public static function buildParameter(
-		\Phalcon\Config $SwaggerParameter,
-		\Phalcon\Config $SwaggerConfig=null
+		Config $SwaggerParameter
 	) {
 
 		// @todo if 'in'='body' then expand schema to parameters?

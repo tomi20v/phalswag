@@ -2,6 +2,9 @@
 
 namespace tomi20v\phalswag\Swagger;
 
+use Phalcon\Config;
+use tomi20v\phalswag\AbstractItem;
+
 /**
  * Class Operation
  *
@@ -9,19 +12,35 @@ namespace tomi20v\phalswag\Swagger;
  *
  * @property-read \tomi20v\phalswag\Swagger\ParameterFactory $ParameterFactory
  */
-class Operation extends \Phalcon\Di\Injectable implements \Iterator {
+class Operation extends AbstractItem implements \Iterator {
 
 	protected $_path;
 
 	protected $_method;
+
+	protected $_data = [];
+
+	protected static $_fields = [
+		'tags',
+		'summary',
+		'description',
+		'externalDocs' => 'ExternalDocs',
+		'operationId',
+		'consumes',
+		'produces',
+		'parameters' => 'Parameters',
+		'responses' => 'Responses',
+		'schemes',
+		'deprecated',
+		'security' => 'SecurityRequirement',
+	];
+
 
 	protected $_SwaggerOperationConfig;
 
 	protected $_SwaggerConfig;
 
 	protected $_SwaggerParameters;
-
-	protected $_data = [];
 
 	protected $_isValidated = false;
 
@@ -30,70 +49,12 @@ class Operation extends \Phalcon\Di\Injectable implements \Iterator {
 	 */
 	protected $_validationMessages = [];
 
-	public function __construct(OperationOptions $Config) {
+	public function __construct(Config $Data, $path, $method) {
 
-		$this->_path = $Config->path;
-		$this->_method = $Config->method;
-		$this->_SwaggerOperationConfig = $Config->SwaggerOperationConfig;
+		parent::__construct($Data);
 
-		$swaggerParameters = $this->_SwaggerOperationConfig->parameters;
-		$ParameterFactory = $this->ParameterFactory;
-		$parameters = [];
-
-		foreach ($swaggerParameters as $EachSwaggerParameter) {
-			$name = $EachSwaggerParameter->name;
-			$parameters[$name] = $ParameterFactory->buildParameter(
-				$EachSwaggerParameter,
-				$Config->SwaggerConfig
-			);
-		}
-
-		$this->_SwaggerParameters = $parameters;
-
-	}
-
-	/**
-	 * I set $Model's properties and my $_data from $params, according to swagger params
-	 * @param array[] $params array with possible keys path, get, post, put, request
-	 * @param \Phalcon\Mvc\Model $Model shall be Phalcon\Mvc\Model or anything that has public properties or setters with signature setProperty($val)
-	 * @param null|string[] $whitelist whitelist of fields to set in $Model
-	 * @return $this
-	 * @throws Exception
-	 */
-	public function bindRequest($pathParams, \Phalcon\Http\Request $Request, \Phalcon\Mvc\Model $Model=null, $whitelist=null) {
-
-		$data = [];
-
-		/**
-		 * @var \tomi20v\phalswag\Swagger\Parameter\EntityAbstract $EachParameter
-		 */
-		foreach ($this->_SwaggerParameters as $EachParameter) {
-
-			if ($EachParameter->fetch($pathParams, $Request)) {
-
-				$name = $EachParameter->getName();
-
-				$data[$name] = $EachParameter->getValue();
-
-				if (is_null($Model) || ($whitelist && !in_array($EachParameter->name, $whitelist)));
-				else {
-					$setterMethod = 'set' . ucfirst($name);
-					if (method_exists($Model, $setterMethod)) {
-						call_user_func([$Model, $setterMethod], $EachParameter->getValue());
-					}
-					else {
-						$Model->$name = $EachParameter->getValue();
-					}
-				}
-			}
-
-		}
-
-		$this->_data = $data;
-
-		$this->_isValidated = false;
-
-		return $this;
+		$this->_path = $path;
+		$this->_method = $method;
 
 	}
 

@@ -2,19 +2,22 @@
 
 namespace tomi20v\phalswag\Mvc;
 
-use Phalcon\Http\Response;
 use Phalcon\Mvc\Model;
-use tomi20v\phalswag\Swagger\Operation;
+use tomi20v\phalswag\Swagger;
 
 /**
  * Class Controller
  *
  * @package tomi20v\phalswag
  *
- * @property-read \tomi20v\phalswag\Swagger $Swagger
+ * @property-read Swagger $Swagger
  * @property-read \Phalcon\Dispatcher $dispatcher
+ * @property \tomi20v\phalswag\Service\SwaggerService SwaggerService
  */
 abstract class Controller extends \Phalcon\Mvc\Controller {
+
+	/** @var string can be defined with $_swaggerFname */
+	protected static $_swaggerPath;
 
 	/**
 	 * @var string define this to automaticly load swagger config file
@@ -22,30 +25,18 @@ abstract class Controller extends \Phalcon\Mvc\Controller {
 	protected static $_swaggerFname;
 
 	/**
-	 * @var \Phalcon\Config
+	 * @var Swagger
 	 */
-	protected $_SwaggerConfig;
+	protected $_Swagger;
 
 	public function onConstruct() {
 		if (!empty(static::$_swaggerFname)) {
-			$this->_SwaggerConfig = $this->Swagger->getReader()->read(static::$_swaggerFname);
+			$swaggerPath = implode('/', [
+				trim(static::$_swaggerPath, '/'),
+				trim(static::$_swaggerFname, '/'),
+			]);
+			$this->_Swagger = $this->SwaggerService->getSwagger($swaggerPath);
 		}
-	}
-
-	public function buildResponse($success, $data, $meta=[]) {
-		$Response = new Response;
-		$content = $success
-			? [
-				'success' => true,
-				'data' => $data,
-				'meta' => $meta,
-			]
-			: [
-				'success' => false,
-				'errors' => $data,
-			];
-		$Response->setJsonContent($content);
-		return $Response;
 	}
 
 	/**
@@ -53,17 +44,13 @@ abstract class Controller extends \Phalcon\Mvc\Controller {
 	 *
 	 * @param $operationId
 	 * @param Model $Model
-	 * @return Operation
+	 * @return \tomi20v\phalswag\Swagger\Operation
 	 */
-	protected function _getBoundSwaggerAction($operationId, Model $Model) {
+	protected function _getBoundSwaggerOperation($operationId, Model $Model) {
 
-		// I could decorate this to a SwaggerOptions class buuut who's got time for that!?
-		$SwaggerOperationConfig = $this->Swagger->findOperationConfigById($this->_SwaggerConfig, $operationId);
+		$SwaggerOperation = $this->SwaggerService->getOperationById($operationId, $this->_Swagger);
 
-		$SwaggerOperation = $this->Swagger->getOperation($SwaggerOperationConfig);
-
-		// @todo extract this to a RequestWithPathParams obut with nicer name
-		$SwaggerOperation->bindRequest($this->dispatcher->getParams(), $this->request, $Model);
+		$this->SwaggerService->bindRequest($Model, $SwaggerOperation, $this->dispatcher->getParams(), $this->request);
 
 		return $SwaggerOperation;
 
