@@ -1,16 +1,28 @@
 <?php
 
-namespace tomi20v\phalswag\Swagger;
+namespace tomi20v\phalswag\Model\Swagger;
 
 use Phalcon\Config;
-use tomi20v\phalswag\AbstractItem;
+use tomi20v\phalswag\Model\AbstractItem;
 
 /**
  * Class Operation
  *
  * @package tomi20v\phalswag
  *
- * @property-read \tomi20v\phalswag\Swagger\ParameterFactory $ParameterFactory
+ * @property-read \tomi20v\phalswag\Model\Swagger\ParameterFactory $ParameterFactory
+ *
+ * @property $tags
+ * @property string $summary
+ * @property string $description
+ * @property string $operationId
+ * @property string $consumes
+ * @property string $produces
+ * @property Parameters parameters
+ * @property Responses $responses
+ * @property $schemes
+ * @property $deprecated
+ * @property $security
  */
 class Operation extends AbstractItem implements \Iterator {
 
@@ -49,6 +61,11 @@ class Operation extends AbstractItem implements \Iterator {
 	 */
 	protected $_validationMessages = [];
 
+	/**
+	 * @param Config $Data
+	 * @param string $path
+	 * @param string $method
+	 */
 	public function __construct(Config $Data, $path, $method) {
 
 		parent::__construct($Data);
@@ -89,6 +106,7 @@ class Operation extends AbstractItem implements \Iterator {
 
 		$this->_validationMessages = [];
 
+		/** @var \tomi20v\phalswag\Model\Swagger\ParameterAbstract $EachParameter */
 		foreach ($this->_SwaggerParameters as $EachParameter) {
 			if (!$EachParameter->isValid()) {
 				$validationMessages[$EachParameter->getName()] = $EachParameter->getValidationMessages();
@@ -137,9 +155,14 @@ class Operation extends AbstractItem implements \Iterator {
 	 * @return null
 	 */
 	public function getLabel($name) {
-		return isset($this->_SwaggerParameters[$name])
-			? $this->_SwaggerParameters[$name]->getDescription()
-			: null;
+		$ret = null;
+		if (isset($this->_SwaggerParameters[$name]))
+		{
+			/** @var ParameterAbstract $Parameter */
+			$Parameter = $this->_SwaggerParameters[$name];
+			$ret = $Parameter->getDescription();
+		}
+		return $ret;
 	}
 
 	/**
@@ -148,9 +171,14 @@ class Operation extends AbstractItem implements \Iterator {
 	 * @return null
 	 */
 	public function getValue($name) {
-		return isset($this->_SwaggerParameters[$name])
-			? $this->_SwaggerParameters[$name]->getValue()
-			: null;
+		$ret = null;
+		if (isset($this->_SwaggerParameters[$name]))
+		{
+			/** @var ParameterAbstract $Parameter */
+			$Parameter = $this->_SwaggerParameters[$name];
+			$ret = $Parameter->getValue();
+		}
+		return $ret;
 	}
 
 	/**
@@ -162,19 +190,42 @@ class Operation extends AbstractItem implements \Iterator {
 		return array_key_exists($name, $this->_SwaggerParameters);
 	}
 
-	// iterate $this->_SwaggerParameters
+	/**
+	 * iterate $this->_SwaggerParameters
+	 * @return mixed
+	 */
 	public function current() {
 		return current($this->_SwaggerParameters);
 	}
+
+	/**
+	 * iterate $this->_SwaggerParameters
+	 * @return mixed
+	 */
 	public function next() {
 		return next($this->_SwaggerParameters);
 	}
+
+	/**
+	 * iterate $this->_SwaggerParameters
+	 * @return mixed
+	 */
 	public function key() {
 		return key($this->_SwaggerParameters);
 	}
+
+	/**
+	 * iterate $this->_SwaggerParameters
+	 * @return bool
+	 */
 	public function valid() {
 		return !is_null(key($this->_SwaggerParameters));
 	}
+
+	/**
+	 * iterate $this->_SwaggerParameters
+	 * @return mixed
+	 */
 	public function rewind() {
 		return reset($this->_SwaggerParameters);
 	}

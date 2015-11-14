@@ -1,6 +1,7 @@
 <?php
 
-namespace tomi20v\phalswag\Swagger;
+namespace tomi20v\phalswag;
+use Phalcon\Config\Adapter\Json;
 
 /**
  * Class Reader
@@ -12,10 +13,10 @@ class Reader {
 	/**
 	 * I read a config file and return it
 	 * @param string $fname relative to $this->_configPath
-	 * @return \Phalcon\Config\Adapter\Json
+	 * @return Json
 	 */
 	public function read($fname) {
-		$Config = new \Phalcon\Config\Adapter\Json($fname);
+		$Config = new Json($fname);
 		return $Config;
 	}
 

@@ -1,17 +1,20 @@
 <?php
 
-namespace tomi20v\phalswag\Swagger\Parameter;
+namespace tomi20v\phalswag\Model\Swagger;
+
+use Phalcon\Di\Injectable;
+use Phalcon\Http\Request;
+use Phalcon\Validation\Validator;
+use tomi20v\phalswag\ValidationStub;
 
 /**
- * Class EntityAbstract
- *
- * @package tomi20v\phalswag
+ * Class ParameterAbstract
  *
  * @property-read \Phalcon\Filter $Filter
  * @property-read \tomi20v\phalswag\Validation\ValidatorFactory $ValidatorFactory
  * @property-read \tomi20v\phalswag\ValidationStub $ValidationStub
  */
-abstract class EntityAbstract extends \Phalcon\Di\Injectable {
+abstract class ParameterAbstract extends Injectable {
 
 	protected $_value = null;
 
@@ -29,8 +32,13 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 
 	protected $_validators = [];
 
+	protected $_Validation;
+
 	protected $_validationMessages = [];
 
+	/**
+	 * @param $SwaggerConfig
+	 */
 	public function __construct($SwaggerConfig) {
 		$this->_SwaggerConfig = $SwaggerConfig;
 		$this->_buildFilters();
@@ -38,6 +46,7 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 		if (isset($this->_SwaggerConfig->default)) {
 			$this->setValue($this->_SwaggerConfig->default);
 		}
+		$this->_Validation = new ValidationStub();
 	}
 
 	/**
@@ -94,11 +103,11 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 	 * I fetch a value from pathparams and request
 	 * @todo wrap pathparams and request in a composite
 	 * @param $pathParams
-	 * @param \Phalcon\Http\Request $Request
+	 * @param Request $Request
 	 * @return bool
 	 * @throws \Exception
 	 */
-	public function fetch($pathParams, \Phalcon\Http\Request $Request) {
+	public function fetch($pathParams, Request $Request) {
 
 		$this->value = null;
 		$this->_hasFetched = false;
@@ -159,6 +168,7 @@ abstract class EntityAbstract extends \Phalcon\Di\Injectable {
 
 	public function isValid() {
 		$this->_validationMessages = [];
+		/** @var Validator $EachValidator */
 		foreach ($this->_validators as $eachField=>$EachValidator) {
 			if (!$EachValidator->validate($this->ValidationStub->setValue($this->_value), $eachField)) {
 				$this->_validationMessages = array_merge($this->_validationMessages, $this->ValidationStub->getMessages());

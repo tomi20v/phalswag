@@ -1,15 +1,15 @@
 <?php
 
-namespace tomi20v\phalswag\Swagger\Parameter\Entity;
+namespace tomi20v\phalswag\Model\Swagger\Parameter;
 
-use tomi20v\phalswag\Swagger\Parameter\EntityAbstract;
+use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
 
 /**
- * Class EntityBoolean
+ * Class ParameterBoolean
  *
  * @package tomi20v\phalswag
  */
-class EntityBoolean extends EntityAbstract {
+class ParameterBoolean extends ParameterAbstract {
 
 	protected function _buildFilters() {
 		parent::_buildFilters();

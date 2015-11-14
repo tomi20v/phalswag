@@ -1,9 +1,9 @@
 <?php
 
-namespace tomi20v\phalswag;
+namespace tomi20v\phalswag\Model;
 
 use Phalcon\Config;
-use tomi20v\phalswag\Swagger\Operation;
+use tomi20v\phalswag\Model\Swagger\Operation;
 
 /**
  * Class Swagger - maybe I should be renamed to Helper...
@@ -33,18 +33,24 @@ class Swagger extends AbstractItem {
 		'externalDocs' => 'ExternalDocs',
 	];
 
+	/**
+	 * @param string $operationId
+	 * @return null|Operation
+	 */
 	public function getOperationById($operationId) {
 		$className = static::CHILD_CLASS_NAMESPACE . 'Operation';
-		foreach ($this->_data->paths as $eachPathKey => &$EachPath) {
-			/** @var Operation $EachOperation */
-			foreach ($EachPath as $each_operation_key => &$EachOperation){
-				if (isset($EachOperation->operationId) && $EachOperation->operationId == $operationId) {
-					$Operation = $EachOperation;
-					if (!$Operation instanceof $className) {
-						$Operation = new $className($Operation, $eachPathKey, $each_operation_key);
-						$EachOperation = $Operation;
+		if (isset($this->_data->paths)) {
+			foreach ($this->_data->paths as $eachPathKey => &$EachPath) {
+				/** @var Operation $EachOperation */
+				foreach ($EachPath as $each_operation_key => &$EachOperation){
+					if (isset($EachOperation->operationId) && $EachOperation->operationId == $operationId) {
+						$Operation = $EachOperation;
+						if (!$Operation instanceof $className) {
+							$Operation = new $className($Operation, $eachPathKey, $each_operation_key);
+							$EachOperation = $Operation;
+						}
+						return $Operation;
 					}
-					return $Operation;
 				}
 			}
 		}

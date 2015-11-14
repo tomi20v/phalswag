@@ -15,13 +15,12 @@ class ValidatorFactory {
 		'*' => 'Phalcon\\Validation\\Validator\\',
 	];
 
-	function __construct($validatorClasses=null) {
-		if (!is_null($validatorClasses)) {
-			$this->_validatorClasses = array_merge($this->_validatorClasses, $validatorClasses);
-		}
-	}
-
-	public function buildValidator($rule, $options=[]) {
+	/**
+	 * @param string $rule
+	 * @param array $options
+	 * @return mixed
+	 */
+	public function buildValidator($rule, array $options=[]) {
 		$className = array_key_exists($rule, $this->_validatorClasses)
 			? $this->_validatorClasses[$rule]
 			: $this->_validatorClasses['*'] . $rule;

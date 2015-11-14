@@ -1,15 +1,15 @@
 <?php
 
-namespace tomi20v\phalswag\Swagger\Parameter\Entity;
+namespace tomi20v\phalswag\Model\Swagger\Parameter;
 
-use tomi20v\phalswag\Swagger\Parameter\EntityAbstract;
+use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
 
 /**
- * Class EntityString
+ * Class ParameterString
  *
  * @package tomi20v\phalswag
  */
-class EntityString extends EntityAbstract {
+class ParameterString extends ParameterAbstract {
 
 	/**
 	 * I cover:

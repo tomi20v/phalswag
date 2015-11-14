@@ -1,24 +1,28 @@
 <?php
 
-namespace tomi20v\phalswag\Swagger\Parameter\Entity;
+namespace tomi20v\phalswag\Model\Swagger\Parameter;
 
-use tomi20v\phalswag\Swagger\Parameter\EntityAbstract;
+use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
 
 /**
- * Class EntityArray
+ * Class ParameterArray
  *
  * @package tomi20v\phalswag
  *
- * @property-read \tomi20v\phalswag\Swagger $Swagger
- * @property-read \tomi20v\phalswag\Swagger\ParameterFactory $ParameterFactory
+ * @property-read \tomi20v\phalswag\Model\Swagger $Swagger
+ * @property-read \tomi20v\phalswag\Model\Swagger\ParameterFactory $ParameterFactory
  */
-class EntityArray extends EntityAbstract {
+class ParameterArray extends ParameterAbstract {
 
 	/**
 	 * @var \tomi20v\phalswag\Swagger\Entity
 	 */
 	protected $_ItemsParameterEntity;
 
+	/**
+	 * @param $SwaggerConfig
+	 * @throws \Exception
+	 */
 	public function __construct($SwaggerConfig) {
 		parent::__construct($SwaggerConfig);
 		if (!isset($this->_SwaggerConfig->items)) {
@@ -91,6 +95,9 @@ class EntityArray extends EntityAbstract {
 		}
 	}
 
+	/**
+	 * @return ParameterAbstract
+	 */
 	protected function _getItemsParameterEntity() {
 		static $ItemsParameterEntity;
 		if (is_null($ItemsParameterEntity)) {

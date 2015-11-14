@@ -1,6 +1,6 @@
 <?php
 
-namespace tomi20v\phalswag\Swagger;
+namespace tomi20v\phalswag\Model\Swagger;
 
 use Phalcon\Config;
 
@@ -13,6 +13,10 @@ class ParameterFactory {
 
 	static $_classTypePattern = '/^[a-zA-Z\_][a-zA-Z0-9\_\-\\\\]*$/';
 
+	/**
+	 * @param string $uglyPart
+	 * @return string
+	 */
 	public static function _niceClassNamePart($uglyPart) {
 		return ucfirst(strtolower(strtr($uglyPart, '-\\', '__')));
 	}
@@ -37,12 +41,12 @@ class ParameterFactory {
 		}
 
 		$classNames = [
-			$nameSpacePart . 'Parameter\\Entity\\Entity',
-			'Parameter\\Entity\\Entity',
+			$nameSpacePart . 'Parameter',
+			'Parameter',
 		];
 		if ($typePart) {
-			$classNames[] = $nameSpacePart . 'Parameter\\Entity\Entity' . $typePart;
-			$classNames[] = 'Parameter\\Entity\Entity' . $typePart;
+			$classNames[] = $nameSpacePart . 'Parameter\\Parameter' . $typePart;
+			$classNames[] = 'Parameter\\Parameter' . $typePart;
 		}
 		$classNames = array_reverse($classNames);
 
@@ -52,7 +56,7 @@ class ParameterFactory {
 			}
 		}
 
-		// this really shouldn't happen as I will find at least tomi20v\phalswag\EntityAbstract class
+		// this really shouldn't happen as I will find at least tomi20v\phalswag\ParameterAbstract class
 		throw new \Exception();
 
 	}
@@ -60,8 +64,7 @@ class ParameterFactory {
 	/**
 	 * I build the parameter object, and inject fetch strategy
 	 * @param Config $SwaggerParameter
-	 * @param Config $SwaggerConfig - I need it to resolve refs
-	 * @return \tomi20v\phalswag\ParameterInstance
+	 * @return ParameterAbstract
 	 */
 	public static function buildParameter(
 		Config $SwaggerParameter
