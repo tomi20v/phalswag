@@ -5,7 +5,7 @@ namespace tomi20v\phalswag\Mvc;
 use Phalcon\Mvc\Model;
 use tomi20v\phalswag\Http\Response;
 use tomi20v\phalswag\Model\RequestModel;
-use tomi20v\phalswag\Http\ResponseBuilder;
+use tomi20v\phalswag\Builder\Http\ResponseBuilder;
 use tomi20v\phalswag\Model\Swagger;
 
 /**

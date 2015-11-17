@@ -7,7 +7,8 @@ use tomi20v\phalswag\Exception\InvalidKeyException;
 use tomi20v\phalswag\Exception\UnimplementedException;
 
 /**
- * Class AbstractItem
+ * Class AbstractItem - an immutable model representation which can be built from a Config object and/but
+ * 		lazy-inflates its elements when getting them
  */
 abstract class AbstractItem {
 

@@ -3,7 +3,6 @@
 namespace tomi20v\phalswag\Http;
 
 use Phalcon\Http\jsonOptions;
-use Phalcon\Http\content;
 
 /**
  * Class Response
@@ -16,16 +15,26 @@ class Response extends \Phalcon\Http\Response {
 
 	protected $_rawContent = ['success'=>false, 'result'=>null];
 
-	protected function _refreshContent() {
-		$this->_content = json_encode($this->_rawContent);
-		return $this;
+	/**
+	 * @return mixed|null
+	 */
+	public function getSuccess() {
+		return $this->_rawContent['success'];
 	}
 
+	/**
+	 * @param bool $success
+	 * @return $this
+	 */
 	public function setSuccess($success) {
 		$this->_rawContent['success'] = $success ? true : false;
 		return $this->_refreshContent();
 	}
 
+	/**
+	 * @param array $errors
+	 * @return $this
+	 */
 	public function addErrors($errors) {
 		if (!isset($this->_rawContent['errors'])) {
 			$this->_rawContent['errors'] = [];
@@ -46,15 +55,35 @@ class Response extends \Phalcon\Http\Response {
 		return $this->_refreshContent();
 	}
 
+	/**
+	 * @param string $field
+	 * @param string $error
+	 * @return $this
+	 */
 	public function addError($field, $error) {
 		return $this->addErrors([ $field => $error ]);
 	}
 
+	/**
+	 * @return array
+	 */
+	public function getErrors() {
+		return isset($this->_rawContent['errors']) ? $this->_rawContent['errors'] : null;
+	}
+
+	/**
+	 * @param mixed $result
+	 * @return $this
+	 */
 	public function setResult($result) {
 		$this->_rawContent['result'] = $result;
 		return $this->_refreshContent();
 	}
 
+	/**
+	 * @param array $meta
+	 * @return $this
+	 */
 	public function setMeta($meta) {
 		if (is_null($meta)) {
 			unset($this->_rawContent['meta']);
@@ -70,34 +99,64 @@ class Response extends \Phalcon\Http\Response {
 		return $this->_refreshContent();
 	}
 
-	protected function _setMeta($key, $val) {
-		if (!isset($this->_rawContent['meta'])) {
-			$this->_rawContent['meta'] = [];
-		}
-		$this->_rawContent['meta'][$key] = $val;
-		return $this->_refreshContent();
-	}
-
+	/**
+	 * @param int $allCnt number of all items
+	 * @return $this
+	 */
 	public function setAllCnt($allCnt) {
 		return $this->_setMeta('allCnt', (int)$allCnt);
 	}
 
+	/**
+	 * @param int $foundCnt number of found item if they were searched/filtered
+	 * @return $this
+	 */
 	public function setFoundCnt($foundCnt) {
 		return $this->_setMeta('foundCnt', (int)$foundCnt);
 	}
 
+	/**
+	 * @param $cnt
+	 * @return $this
+	 */
 	public function setCnt($cnt) {
 		return $this->_setMeta('cnt', (int)$cnt);
 	}
 
-	public function setMetaSchema($model, $data) {
+//	/**
+//	 * @param key $model
+//	 * @param array $data
+//	 * @return $this
+//	 */
+//	public function setMetaSchema($model, $data) {
+//		if (!isset($this->_rawContent['meta'])) {
+//			$this->_rawContent['meta'] = [];
+//		}
+//		if (!isset($this->_rawContent['meta']['schema'])) {
+//			$this->_rawContent['meta']['schema'] = [];
+//		}
+//		$this->_rawContent['meta']['schema'][$model] = (array)$data;
+//		return $this->_refreshContent();
+//	}
+
+	/**
+	 * @return $this
+	 */
+	private function _refreshContent() {
+		$this->_content = json_encode($this->_rawContent);
+		return $this;
+	}
+
+	/**
+	 * @param string $key
+	 * @param mixed $val
+	 * @return $this
+	 */
+	private function _setMeta($key, $val) {
 		if (!isset($this->_rawContent['meta'])) {
 			$this->_rawContent['meta'] = [];
 		}
-		if (!isset($this->_rawContent['meta']['schema'])) {
-			$this->_rawContent['meta']['schema'] = [];
-		}
-		$this->_rawContent['meta']['schema'][$model] = (array)$data;
+		$this->_rawContent['meta'][$key] = $val;
 		return $this->_refreshContent();
 	}
 
