@@ -1,0 +1,15 @@
+<phpunit bootstrap="bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite>
+            <directory>src</directory>
+        </testsuite>
+    </testsuites>
+    <logging>
+        <log type="coverage-html" target="report/html" />
+    </logging>
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="false">
+            <directory suffix=".php">../src</directory>
+        </whitelist>
+    </filter>
+</phpunit>
