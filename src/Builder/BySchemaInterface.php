@@ -17,6 +17,6 @@ interface BySchemaInterface {
 	 * @param BySchemaFactory $BuilderFactory
 	 * @return array|null
 	 */
-	public function buildValue($Model, $key, SchemaAbstract $Schema, BySchemaFactory $BuilderFactory);
+	public function buildValue($Model, $key, SchemaAbstract $Schema);
 
 }

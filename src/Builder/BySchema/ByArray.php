@@ -18,8 +18,7 @@ class ByArray extends BySchemaAbstract {
 	 * @return array
 	 * @throws \tomi20v\phalswag\Exception\UnimplementedException
 	 */
-	protected function _buildValue($Value, SchemaAbstract $Schema, BySchemaFactory $BuilderFactory)
-	{
+	protected function _buildValue($Value, SchemaAbstract $Schema) {
 
 		$ret = [];
 
@@ -29,14 +28,17 @@ class ByArray extends BySchemaAbstract {
 		/** @var \tomi20v\phalswag\Model\Swagger\SchemaAbstract $EachProperty */
 		foreach ($Value as $eachKey => $EachValue) {
 
+			/** @var BySchemaFactory $BuilderFactory */
+			$BuilderFactory = $this->BySchemaFactory;
 			$Builder = $BuilderFactory->get($ItemSchema->type);
+
 			$Items = new \stdClass();
 			$Items->items = $EachValue;
+
 			$ret[$eachKey] = $Builder->buildValue(
 					$Items,
 					'items',
-					$ItemSchema,
-					$BuilderFactory
+					$ItemSchema
 			);
 
 		};
@@ -44,6 +46,5 @@ class ByArray extends BySchemaAbstract {
 		return $ret;
 
 	}
-
 
 }

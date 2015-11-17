@@ -18,7 +18,7 @@ class ByObject extends BySchemaAbstract {
 	 * @return array
 	 * @throws \tomi20v\phalswag\Exception\UnimplementedException
 	 */
-	protected function _buildValue($Value, SchemaAbstract $Schema, BySchemaFactory $BuilderFactory)
+	protected function _buildValue($Value, SchemaAbstract $Schema)
 	{
 
 		$ret = [];
@@ -28,8 +28,10 @@ class ByObject extends BySchemaAbstract {
 		/** @var SchemaAbstract $EachProperty */
 		foreach ($Properties as $eachKey => $EachProperty) {
 
-			$Builder = $BuilderFactory->get($EachProperty->type);
-			$ret[$eachKey] = $Builder->buildValue($Value, $eachKey, $EachProperty, $BuilderFactory);
+			/** @var BySchemaFactory $bySchemaFactory */
+			$bySchemaFactory = $this->BySchemaFactory;
+			$Builder = $bySchemaFactory->get($EachProperty->type);
+			$ret[$eachKey] = $Builder->buildValue($Value, $eachKey, $EachProperty);
 
 		};
 

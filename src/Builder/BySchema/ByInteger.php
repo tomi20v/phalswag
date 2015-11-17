@@ -13,7 +13,12 @@ use tomi20v\phalswag\Swagger\Model\Swagger\Schema\SchemaObject;
  */
 class ByInteger extends BySchemaAbstract {
 
-	protected function _buildValue($Value, SchemaAbstract $Schema, BySchemaFactory $BuilderFactory) {
+	/**
+	 * @param $Value
+	 * @param SchemaAbstract $Schema
+	 * @return int
+	 */
+	protected function _buildValue($Value, SchemaAbstract $Schema) {
 
 		return (int) $Value;
 

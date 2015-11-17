@@ -20,7 +20,7 @@ abstract class BySchemaAbstract extends Injectable implements BySchemaInterface 
 	 * @return null
 	 * @throws InvalidModelForSchemaException
 	 */
-	public function buildValue($Model, $key, SchemaAbstract $Schema, BySchemaFactory $BuilderFactory)
+	public function buildValue($Model, $key, SchemaAbstract $Schema)
 	{
 
 		$ret = null;
@@ -29,7 +29,7 @@ abstract class BySchemaAbstract extends Injectable implements BySchemaInterface 
 
 			$Value = $Model->$key;
 
-			$ret = $this->_buildValue($Value, $Schema, $BuilderFactory);
+			$ret = $this->_buildValue($Value, $Schema);
 
 		}
 		elseif (isset($Schema->required) && $Schema->required) {
@@ -46,6 +46,6 @@ abstract class BySchemaAbstract extends Injectable implements BySchemaInterface 
 	 * @param BySchemaFactory $BuilderFactory
 	 * @return mixed
 	 */
-	abstract protected function _buildValue($Value, SchemaAbstract $Schema, BySchemaFactory $BuilderFactory);
+	abstract protected function _buildValue($Value, SchemaAbstract $Schema);
 
 }

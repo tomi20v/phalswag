@@ -14,26 +14,13 @@ use tomi20v\phalswag\Swagger\Model\Swagger\Schema\SchemaObject;
 class ByBoolean extends BySchemaAbstract {
 
 	/**
-	 * @param $Model
-	 * @param $key
+	 * @param $Value
 	 * @param SchemaAbstract $Schema
-	 * @param BySchemaFactory $BuilderFactory
-	 * @return null|string
-	 * @throws InvalidModelForSchemaException
+	 * @return bool|null
 	 */
-	public function buildValue($Model, $key, SchemaAbstract $Schema, BySchemaFactory $BuilderFactory) {
+	protected function _buildValue($Value, SchemaAbstract $Schema) {
 
-		$ret = null;
-
-		if (isset($Model->$key)) {
-			$value = $Model->$key;
-			$ret = (bool)$value;
-		}
-		elseif (isset($Schema->required) && $Schema->required) {
-			throw new InvalidModelForSchemaException;
-		}
-
-		return $ret;
+		return (bool) $Value;
 
 	}
 
