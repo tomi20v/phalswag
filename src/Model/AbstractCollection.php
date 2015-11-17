@@ -17,6 +17,12 @@ abstract class AbstractCollection extends AbstractItem implements \Iterator {
 	protected static $_childClassName = '';
 
 	/**
+	 * @param Config $data
+	 */
+	public function __construct(Config $data) {
+		$this->_data = $data;
+	}
+		/**
 	 * @param string $key
 	 * @return null
 	 * @throws InvalidKeyException

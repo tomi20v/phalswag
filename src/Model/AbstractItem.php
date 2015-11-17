@@ -10,13 +10,14 @@ use tomi20v\phalswag\Exception\UnimplementedException;
  * Class AbstractItem - an immutable model representation which can be built from a Config object and/but
  * 		lazy-inflates its elements when getting them
  */
-abstract class AbstractItem {
+abstract class AbstractItem implements \Iterator {
 
 	const KEY_PATTERN = '/^[a-z][a-zA-Z0-9]*$/';
 
 	const CHILD_CLASS_NAMESPACE = 'tomi20v\\phalswag\\Model\\Swagger\\';
 
 	protected static $_fields = [];
+	private $_fieldsNamesToIterate = [];
 
 	protected $_data = [];
 
@@ -61,6 +62,14 @@ abstract class AbstractItem {
 	 */
 	public function __construct(Config $data) {
 		$this->_data = $data;
+		$this->_fieldsNamesToIterate = array_keys(static::$_fields);
+		foreach ($this->_fieldsNamesToIterate as $eachKey => $eachField) {
+			if (!isset($data->$eachField)) {
+				unset($this->_fieldsNamesToIterate[$eachKey]);
+			}
+		}
+		//$this->_fieldsNamesToIterate = array_merge($this->_fieldsNamesToIterate);
+		reset($this->_fieldsNamesToIterate);
 	}
 
 	/**
@@ -82,7 +91,6 @@ abstract class AbstractItem {
 			$data = $this->_data[$key];
 
 			if (is_callable($className)) {
-
 				if ($data instanceof Config) {
 					$data = call_user_func($className, $data);
 					$this->_data[$key] = $data;
@@ -119,5 +127,45 @@ abstract class AbstractItem {
 			throw new InvalidKeyException($key);
 		}
 	}
+
+	public function current()
+	{
+		if ($this->valid()) {
+			$key = current($this->_fieldsNamesToIterate);
+			return $this->_getField($key);
+		}
+		return null;
+	}
+
+	public function next()
+	{
+		$index = next($this->_fieldsNamesToIterate);
+		return $index === false ? null : $this->_getField($index);
+	}
+
+	public function key()
+	{
+		return current($this->_fieldsNamesToIterate);
+	}
+
+	public function valid()
+	{
+		return key($this->_fieldsNamesToIterate) !== null;
+	}
+
+	public function rewind()
+	{
+		$key = reset($this->_fieldsNamesToIterate);
+		return $this->_getField($key);
+	}
+
+	/**
+	 * @param $key
+	 * @return null|mixed
+	 */
+	private function _getField($key) {
+		return isset($this->$key) ? $this->$key : null;
+	}
+
 
 }

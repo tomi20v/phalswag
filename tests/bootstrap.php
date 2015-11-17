@@ -9,3 +9,4 @@ require($prefix . '/tests/lib/AbstractTestCase.php');
 require($prefix . '/config/services.php');
 
 require($prefix . '/tests/src/Model/Swagger/TestableSchema.php');
+require($prefix . '/tests/src/Model/TestableItem.php');
