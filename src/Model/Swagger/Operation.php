@@ -25,12 +25,6 @@ use Phalcon\Config;
  */
 class Operation extends AbstractItem implements \Iterator {
 
-	protected $_path;
-
-	protected $_method;
-
-	protected $_data = [];
-
 	protected static $_fields = [
 		'tags',
 		'summary',
@@ -45,20 +39,6 @@ class Operation extends AbstractItem implements \Iterator {
 		'deprecated',
 		'security' => 'SecurityRequirement',
 	];
-
-
-	protected $_SwaggerOperationConfig;
-
-	protected $_SwaggerConfig;
-
-	protected $_SwaggerParameters;
-
-	protected $_isValidated = false;
-
-	/**
-	 * @var \Phalcon\Validation\Message\Group
-	 */
-	protected $_validationMessages = [];
 
 	/**
 	 * iterate $this->_SwaggerParameters

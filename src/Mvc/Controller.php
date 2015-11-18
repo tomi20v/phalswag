@@ -3,6 +3,7 @@
 namespace tomi20v\phalswag\Mvc;
 
 use Phalcon\Mvc\Model;
+use tomi20v\phalswag\Exception\SwaggerException;
 use tomi20v\phalswag\Http\Response;
 use tomi20v\phalswag\Model\RequestModel;
 use tomi20v\phalswag\Builder\Http\ResponseBuilder;
@@ -60,6 +61,11 @@ abstract class Controller extends \Phalcon\Mvc\Controller {
 		$RequestModel = $RequestModel ?: new RequestModel();
 
 		$Operation = $this->SwaggerService->getOperationById($operationId, $this->_Swagger);
+
+		if (is_null($Operation)) {
+			throw new SwaggerException(404);
+		}
+
 		$this->SwaggerService->bindRequest($RequestModel, $Operation, $this->dispatcher->getParams(), $this->request);
 		$Result = $this->SwaggerService->validate($RequestModel, $Operation);
 

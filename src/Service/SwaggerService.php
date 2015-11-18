@@ -10,7 +10,7 @@ use tomi20v\phalswag\Exception\InvalidModelForSchemaException;
 use tomi20v\phalswag\Exception\UnimplementedException;
 use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
 use tomi20v\phalswag\Service\Builder\BySchemaFactory;
-use tomi20v\phalswag\Model\Swagger;
+use tomi20v\phalswag\Model\Swagger\Swagger;
 use tomi20v\phalswag\Model\Swagger\Operation;
 use tomi20v\phalswag\Reader;
 use tomi20v\phalswag\Model\Swagger\SchemaAbstract;
