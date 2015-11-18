@@ -3,13 +3,16 @@
 namespace tomi20v\phalswag\Model;
 
 use Phalcon\Config;
+use tomi20v\phalswag\Builder\MappedObjectTrait;
 use tomi20v\phalswag\Exception\InvalidKeyException;
 use tomi20v\phalswag\Exception\UnimplementedException;
 
 /**
  * Class AbstractCollection
  */
-abstract class AbstractCollection extends AbstractItem implements \Iterator {
+abstract class AbstractCollection implements \Iterator {
+
+	use MappedObjectTrait;
 
 	const KEY_PATTERN = '/^[a-z0-9][a-zA-Z0-9]*$/';
 
@@ -75,6 +78,18 @@ abstract class AbstractCollection extends AbstractItem implements \Iterator {
 	 */
 	public function valid() {
 		return $this->key() !== null;
+	}
+
+	/**
+	 * @param string $key
+	 * @throws InvalidKeyException
+	 */
+	protected function _checkKey($key)
+	{
+		if (!preg_match(static::KEY_PATTERN, $key))
+		{
+			throw new InvalidKeyException($key);
+		}
 	}
 
 }

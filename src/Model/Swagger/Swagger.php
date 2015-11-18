@@ -5,7 +5,7 @@ namespace tomi20v\phalswag\Model\Swagger;
 use Phalcon\Config;
 
 /**
- * Class Swagger - maybe I should be renamed to Helper...
+ * Class Swagger
  *
  * @package tomi20v\phalswag
  */
