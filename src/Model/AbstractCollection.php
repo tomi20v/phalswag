@@ -3,7 +3,6 @@
 namespace tomi20v\phalswag\Model;
 
 use Phalcon\Config;
-use tomi20v\phalswag\Model\AbstractItem;
 use tomi20v\phalswag\Exception\InvalidKeyException;
 use tomi20v\phalswag\Exception\UnimplementedException;
 
@@ -22,7 +21,8 @@ abstract class AbstractCollection extends AbstractItem implements \Iterator {
 	public function __construct(Config $data) {
 		$this->_data = $data;
 	}
-		/**
+
+	/**
 	 * @param string $key
 	 * @return null
 	 * @throws InvalidKeyException

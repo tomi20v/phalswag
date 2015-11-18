@@ -3,7 +3,6 @@
 namespace tomi20v\phalswag\Model\Swagger;
 
 use Phalcon\Config;
-use tomi20v\phalswag\Model\AbstractItem;
 use tomi20v\phalswag\Exception\InvalidKeyException;
 use tomi20v\phalswag\Exception\UnimplementedException;
 

@@ -10,3 +10,4 @@ require($prefix . '/config/services.php');
 
 require($prefix . '/tests/src/Model/Swagger/TestableSchema.php');
 require($prefix . '/tests/src/Model/TestableItem.php');
+require($prefix . '/tests/src/Model/TestableCollection.php');

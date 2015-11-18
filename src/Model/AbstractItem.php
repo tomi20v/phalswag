@@ -14,9 +14,10 @@ abstract class AbstractItem implements \Iterator {
 
 	const KEY_PATTERN = '/^[a-z][a-zA-Z0-9]*$/';
 
-	const CHILD_CLASS_NAMESPACE = 'tomi20v\\phalswag\\Model\\Swagger\\';
+	const CHILD_CLASS_NAMESPACE = 'tomi20v\phalswag';
 
 	protected static $_fields = [];
+
 	private $_fieldsNamesToIterate = [];
 
 	protected $_data = [];
@@ -62,13 +63,14 @@ abstract class AbstractItem implements \Iterator {
 	 */
 	public function __construct(Config $data) {
 		$this->_data = $data;
-		$this->_fieldsNamesToIterate = array_keys(static::$_fields);
-		foreach ($this->_fieldsNamesToIterate as $eachKey => $eachField) {
-			if (!isset($data->$eachField)) {
-				unset($this->_fieldsNamesToIterate[$eachKey]);
+		$fieldNamesToIterate = [];
+		foreach (static::$_fields as $eachKey => $eachField) {
+			$fieldName = is_numeric($eachKey) ? $eachField : $eachKey;
+			if (isset($data->$fieldName)) {
+				$fieldNamesToIterate[] = $fieldName;
 			}
 		}
-		//$this->_fieldsNamesToIterate = array_merge($this->_fieldsNamesToIterate);
+		$this->_fieldsNamesToIterate = $fieldNamesToIterate;
 		reset($this->_fieldsNamesToIterate);
 	}
 
@@ -81,7 +83,7 @@ abstract class AbstractItem implements \Iterator {
 	protected function _getMappedObject($key, $className) {
 
 		if (is_string($className)) {
-			$className = static::CHILD_CLASS_NAMESPACE . $className;
+			$className = static::CHILD_CLASS_NAMESPACE . '\\' . $className;
 		}
 
 		$data = null;
@@ -166,6 +168,5 @@ abstract class AbstractItem implements \Iterator {
 	private function _getField($key) {
 		return isset($this->$key) ? $this->$key : null;
 	}
-
 
 }

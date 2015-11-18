@@ -77,9 +77,48 @@ class AbstractItemTest extends \AbstractTestCase {
 	 * @expectedExceptionMessage a_s_d
 	 */
 	public function testGetShouldThrowOnInvalidKey() {
-		$Config = new Config;
-		$Item = new TestableItem($Config);
-		$Item->a_s_d;
+		$TestableItem = TestableItem::getExample();
+		$TestableItem->a_s_d;
+	}
+
+	public function testIterator() {
+
+		$TestableItem = TestableItem::getExample();
+
+		$expectedFields = ['anyField', 'anyOtherField'];
+		$typeAsserts = [
+			function($that, $val) {
+				$that->assertTrue(is_string($val));
+			},
+			function($that, $val) {
+				$that->assertTrue($val instanceof TestableItem);
+			}
+		];
+
+		foreach ($TestableItem as $eachKey => $eachValue) {
+			$expectedField = reset($expectedFields);
+			$this->assertEquals($expectedField, $eachKey);
+			array_shift($expectedFields);
+			/** @var callable $lambda */
+			$lambda = array_shift($typeAsserts);
+			$lambda($this, $eachValue);
+		}
+
+	}
+
+	public function testCurrentReturnsItems() {
+		$TestableItem = TestableItem::getExample();
+		$this->assertEquals('any field', $TestableItem->current());
+		$TestableItem->next();
+		$current = $TestableItem->current();
+		$this->assertTrue($current instanceof TestableItem);
+	}
+
+	public function testCurrentReturnsNullOnInvalid() {
+		$TestableItem = TestableItem::getExample();
+		$TestableItem->next();
+		$TestableItem->next();
+		$this->assertNull($TestableItem->current());
 	}
 
 }

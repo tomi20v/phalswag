@@ -2,8 +2,6 @@
 
 namespace tomi20v\phalswag\Model\Swagger;
 
-use tomi20v\phalswag\Model\AbstractItem;
-
 /**
  * Class Path
  */
