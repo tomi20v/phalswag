@@ -24,4 +24,15 @@ class AbstractCollectionTest extends \AbstractTestCase {
 		$this->assertEquals(1, $i);
 	}
 
+	/**
+	 * @expectedException \tomi20v\phalswag\Exception\InvalidKeyException
+	 */
+	public function testShouldThrowOnInvalidKey() {
+		$TestableItem = TestableItem::getExample();
+		$Collection = new TestableCollection(
+			new Config([$TestableItem])
+		);
+		$Collection->__get('Asd');
+	}
+
 }

@@ -5,15 +5,15 @@ namespace tomi20v\phalswag\Model\Swagger\Parameter;
 use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
 
 /**
- * Class EntityInteger
+ * Class ParameterInteger
  *
  * @package tomi20v\phalswag
  */
-class EntityInteger extends ParameterNumber {
+class ParameterInteger extends ParameterNumber {
 
 	protected function _buildFilters() {
 		ParameterAbstract::_buildFilters();
-		$this->_filters[] = 'int';
+		$this->_filters[] = 'realInt';
 	}
 
 }

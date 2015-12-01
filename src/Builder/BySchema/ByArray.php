@@ -25,11 +25,12 @@ class ByArray extends BySchemaAbstract {
 		/** @var SchemaAbstract $ItemSchema */
 		$ItemSchema = $Schema->items;
 
+		/** @var BySchemaFactory $BuilderFactory */
+		$BuilderFactory = $this->BySchemaFactory;
+
 		/** @var \tomi20v\phalswag\Model\Swagger\SchemaAbstract $EachProperty */
 		foreach ($Value as $eachKey => $EachValue) {
 
-			/** @var BySchemaFactory $BuilderFactory */
-			$BuilderFactory = $this->BySchemaFactory;
 			$Builder = $BuilderFactory->get($ItemSchema->type);
 
 			$Items = new \stdClass();

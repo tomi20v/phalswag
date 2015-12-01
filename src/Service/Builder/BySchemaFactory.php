@@ -23,7 +23,7 @@ class BySchemaFactory {
 	 */
 	public function get($type) {
 
-		if (!isset($this->_builder[$type])) {
+		if (!isset($this->_builders[$type])) {
 
 			switch ($type) {
 				case 'object':

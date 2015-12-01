@@ -2,6 +2,8 @@
 
 namespace tomi20v\phalswag\Model\Swagger\Parameter;
 
+use Phalcon\Config;
+use tomi20v\phalswag\Exception\SwaggerDefinitionException;
 use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
 
 /**
@@ -15,95 +17,14 @@ use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
 class ParameterArray extends ParameterAbstract {
 
 	/**
-	 * @var \tomi20v\phalswag\Swagger\Entity
-	 */
-	protected $_ItemsParameterEntity;
-
-	/**
-	 * @param $SwaggerConfig
+	 * @param $Config
 	 * @throws \Exception
 	 */
-	public function __construct($SwaggerConfig) {
-		parent::__construct($SwaggerConfig);
-		if (!isset($this->_SwaggerConfig->items)) {
-			throw new \Exception('missing property: items');
+	public function __construct($Config) {
+		if (!isset($Config->items)) {
+			throw new SwaggerDefinitionException('missing property: items');
 		}
-		$this->_ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_SwaggerConfig->items);
-	}
-
-	protected function _buildValidators() {
-		parent::_buildValidators();
-		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMaxItems
-		// @see http://json-schema.org/latest/json-schema-validation.html#anchor42
-		if (isset($this->_SwaggerConfig->maxItems)) {
-			$maxItems = $this->_SwaggerConfig->maxItems;
-			$this->_validators['maxItems'] = $this->ValidatorFactory->buildValidator(
-				'ValidationValidatorCallback',
-				[
-					'message' => 'expected to have maximum ' . $maxItems . ' items',
-					'callback' => function($value) use ($maxItems) {
-						if (!empty($value) && (count($value) > $maxItems)) {
-							return false;
-						}
-						return true;
-					}
-			]);
-		}
-		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMinItems
-		// @see http://json-schema.org/latest/json-schema-validation.html#anchor45
-		if (isset($this->_SwaggerConfig->minItems)) {
-			$minItems = $this->_SwaggerConfig->minItems;
-			$this->_validators['minItems'] = $this->ValidatorFactory->buildValidator(
-				'ValidationValidatorCallback',
-				[
-					'message' => 'expected to have minimum ' . $minItems . ' items',
-					'callback' => function($value) use ($minItems) {
-						if (!empty($value) && (count($value) < $minItems)) {
-							return false;
-						}
-						return true;
-					}
-			]);
-		}
-		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterUniqueItems
-		// @see http://json-schema.org/latest/json-schema-validation.html#anchor49
-		if (isset($this->_SwaggerConfig->uniqueItems) && $this->_SwaggerConfig->uniqueItems) {
-			$this->_validators['uniqueItems'] = $this->ValidatorFactory->buildValidator(
-				'ValidationValidatorCallback',
-				[
-					'message' => 'expected to have unique items',
-					'callback' => function($value) {
-						if (!empty($value)) {
-							if (count($value) != count(array_unique($value))) {
-								return false;
-							}
-						}
-						return true;
-					}
-			]);
-		}
-		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterEnum
-		// @see http://json-schema.org/latest/json-schema-validation.html#anchor76
-		if (isset($this->_SwaggerConfig->enum)) {
-			$enum = $this->_SwaggerConfig->enum;
-			$this->_validators['enum'] = $this->ValidatorFactory->buildValidator(
-				'ArrayEnum',
-				[
-					'message' => 'expected values to be in ' . implode(',', $enum),
-					'domain' => $enum,
-			]);
-		}
-	}
-
-	/**
-	 * @return ParameterAbstract
-	 */
-	protected function _getItemsParameterEntity() {
-		static $ItemsParameterEntity;
-		if (is_null($ItemsParameterEntity)) {
-			$ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_SwaggerConfig->items);
-		}
-		return $ItemsParameterEntity;
+		parent::__construct($Config);
 	}
 
 	/**
@@ -117,15 +38,17 @@ class ParameterArray extends ParameterAbstract {
 
 		parent::_buildFilters();
 
-		$collectionFormat = isset($this->_SwaggerConfig->collectionFormat)
-			? $this->_SwaggerConfig->collectionFormat
-			: 'csv';
+		$collectionFormat = isset($this->_data->collectionFormat)
+				? $this->_data->collectionFormat
+				: 'csv';
 
 		// first filter will cut $value to array if necessary
 		$this->_filters[] = function($value) use ($collectionFormat) {
 			if (is_null($value));
-			elseif (is_array($value) && ($collectionFormat == 'multi')) {
-				throw new \Exception('MULTI');
+			elseif (is_array($value)) {
+				if ($collectionFormat == 'multi') {
+					throw new \Exception('TBI: MULTI');
+				}
 			}
 			elseif (is_string($value)) {
 				switch ($collectionFormat) {
@@ -141,7 +64,7 @@ class ParameterArray extends ParameterAbstract {
 				case 'csv':
 				default:
 					$value = explode(',', $value);
-					break;
+//					break;
 				}
 			}
 			else {
@@ -151,17 +74,92 @@ class ParameterArray extends ParameterAbstract {
 		};
 
 		// I'll run each value through the pseudo-param entity's filter by setting the value and getting it back
-		$ItemsParameterEntity = $this->_getItemsParameterEntity();
-		$this->_filters[] = function($value) use ($ItemsParameterEntity) {
-			// @todo here I have to call validation of $this->_ItemsParameterEntity on every $eachItem
+//		$ItemsParameterEntity = $this->_getItemsParameterEntity();
+		$ItemParameterSample = $this->ParameterFactory->buildParameter($this->_data->items);
+		$this->_filters[] = function($value) use ($ItemParameterSample) {
 			if (is_array($value)) {
 				foreach ($value as &$eachValue) {
-					$ItemsParameterEntity->setValue($eachValue);
-					$eachValue = $ItemsParameterEntity->getValue();
+					$ItemParameterSample->setValue($eachValue);
+					$eachValue = $ItemParameterSample->getValue();
 				}
 			}
 			return $value;
 		};
 	}
+
+	protected function _buildValidators() {
+		parent::_buildValidators();
+		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMaxItems
+		// @see http://json-schema.org/latest/json-schema-validation.html#anchor42
+		if (isset($this->_data->maxItems)) {
+			$maxItems = $this->_data->maxItems;
+			$this->_validators['maxItems'] = $this->ValidatorFactory->buildValidator(
+				'Callback',
+				[
+					'message' => 'expected to have maximum ' . $maxItems . ' items',
+					'callback' => function($value) use ($maxItems) {
+						return (!empty($value) && (count($value) > $maxItems))
+							? false
+							: true;
+					}
+			]);
+		}
+		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMinItems
+		// @see http://json-schema.org/latest/json-schema-validation.html#anchor45
+		if (isset($this->_data->minItems)) {
+			$minItems = $this->_data->minItems;
+			$this->_validators['minItems'] = $this->ValidatorFactory->buildValidator(
+				'Callback',
+				[
+					'message' => 'expected to have minimum ' . $minItems . ' items',
+					'callback' => function($value) use ($minItems) {
+						return (!empty($value) && (count($value) < $minItems))
+							? false
+							: true;
+					}
+			]);
+		}
+		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterUniqueItems
+		// @see http://json-schema.org/latest/json-schema-validation.html#anchor49
+		if (isset($this->_data->uniqueItems) && $this->_data->uniqueItems) {
+			$this->_validators['uniqueItems'] = $this->ValidatorFactory->buildValidator(
+				'Callback',
+				[
+					'message' => 'expected to have unique items',
+					'callback' => function($value) {
+						if (!empty($value)) {
+							if (count($value) != count(array_unique($value))) {
+								return false;
+							}
+						}
+						return true;
+					}
+			]);
+		}
+		// NOTE: this will overwrite parent's non multivalue enum validator
+		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterEnum
+		// @see http://json-schema.org/latest/json-schema-validation.html#anchor76
+		if (isset($this->_data->enum)) {
+			$enum = $this->_data->enum;
+			$this->_validators['enum'] = $this->ValidatorFactory->buildValidator(
+				'MultiEnum',
+				[
+					'message' => 'expected values to be in',
+					'enum' => (array) $enum,
+				]
+			);
+		}
+	}
+
+//	/**
+//	 * @return ParameterAbstract
+//	 */
+//	protected function _getItemsParameterEntity() {
+//		static $ItemsParameterEntity;
+//		if (is_null($ItemsParameterEntity)) {
+//			$ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_data->items);
+//		}
+//		return $ItemsParameterEntity;
+//	}
 
 }

@@ -6,6 +6,7 @@ use Phalcon\Config;
 use tomi20v\phalswag\Builder\MappedObjectTrait;
 use tomi20v\phalswag\Exception\InvalidKeyException;
 use tomi20v\phalswag\Exception\UnimplementedException;
+use tomi20v\phalswag\Model\Iterable\ByPropertyTrait;
 
 /**
  * Class AbstractCollection
@@ -14,9 +15,13 @@ abstract class AbstractCollection implements \Iterator {
 
 	use MappedObjectTrait;
 
+	use ByPropertyTrait;
+
 	const KEY_PATTERN = '/^[a-z0-9][a-zA-Z0-9]*$/';
 
 	protected static $_childClassName = '';
+
+	protected $_iterableProperty = '_data';
 
 	/**
 	 * @param Config $data
@@ -37,47 +42,6 @@ abstract class AbstractCollection implements \Iterator {
 
 		return $this->_getMappedObject($key, static::$_childClassName);
 
-	}
-
-	/**
-	 * @return mixed|null
-	 */
-	public function current() {
-		$key = $this->key();
-		if ($key !== null) {
-			return $this->$key;
-		}
-		return null;
-	}
-
-	/**
-	 * @return string|int
-	 */
-	public function key() {
-		return key($this->_data);
-	}
-
-	/**
-	 * @return mixed|null
-	 */
-	public function next() {
-		next($this->_data);
-		return $this->current();
-	}
-
-	/**
-	 * @return mixed|null
-	 */
-	public function rewind() {
-		reset($this->_data);
-		return $this->current();
-	}
-
-	/**
-	 * @return bool
-	 */
-	public function valid() {
-		return $this->key() !== null;
 	}
 
 	/**

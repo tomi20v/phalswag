@@ -25,7 +25,7 @@ class Parameters extends AbstractCollection {
 			if ($data instanceof Config) {
 				if (isset($data['name']) && isset($data['location']) &&
 					$data['name'] == $name && $data['location'] == $location) {
-					$data = ParameterFactory::buildParameter($data);
+					$data = $this->_buildParameters($data);
 					$this->_data[$eachKey] = $data;
 					$ret = $data;
 					break;
@@ -45,19 +45,28 @@ class Parameters extends AbstractCollection {
 	}
 
 	/**
-	 * @return mixed|null
+	 * @return ParameterAbstract|null
 	 */
 	public function current() {
 		$key = $this->key();
 		if ($key !== null) {
 			$data = $this->_data->$key;
 			if ($data instanceof Config) {
-				$data = ParameterFactory::buildParameter($data);
+				$data = $this->_buildParameters($data);
 				$this->_data->$key = $data;
 			}
 			return $data;
 		}
 		return null;
+	}
+
+	/**
+	 * @param Config $data
+	 * @return ParameterAbstract
+	 */
+	protected function _buildParameters($data) {
+		$data = ParameterFactory::buildParameter($data);
+		return $data;
 	}
 
 }

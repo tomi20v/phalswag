@@ -183,4 +183,12 @@ class SwaggerService {
 
 	}
 
+	/**
+	 * @param string $className
+	 * @return bool
+	 */
+	public function classExists($className) {
+		return class_exists($className);
+	}
+
 }

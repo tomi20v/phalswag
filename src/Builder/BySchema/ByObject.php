@@ -25,11 +25,12 @@ class ByObject extends BySchemaAbstract {
 
 		$Properties = $Schema->properties;
 
+		/** @var BySchemaFactory $bySchemaFactory */
+		$bySchemaFactory = $this->BySchemaFactory;
+
 		/** @var SchemaAbstract $EachProperty */
 		foreach ($Properties as $eachKey => $EachProperty) {
 
-			/** @var BySchemaFactory $bySchemaFactory */
-			$bySchemaFactory = $this->BySchemaFactory;
 			$Builder = $bySchemaFactory->get($EachProperty->type);
 			$ret[$eachKey] = $Builder->buildValue($Value, $eachKey, $EachProperty);
 

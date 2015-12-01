@@ -2,10 +2,10 @@
 
 namespace tomi20v\phalswag\Model\Swagger;
 
+use Phalcon\Config;
 use Phalcon\Di\Injectable;
 use Phalcon\Http\Request;
 use Phalcon\Validation\Validator;
-use tomi20v\phalswag\ValidationStub;
 
 /**
  * Class ParameterAbstract
@@ -21,7 +21,7 @@ abstract class ParameterAbstract extends Injectable {
 	/**
 	 * @var \Phalcon\Config
 	 */
-	protected $_SwaggerConfig;
+	protected $_data;
 
 	/**
 	 * @var bool I'll be true after a value has been fetched actually
@@ -37,23 +37,23 @@ abstract class ParameterAbstract extends Injectable {
 	protected $_validationMessages = [];
 
 	/**
-	 * @param $SwaggerConfig
+	 * @param Config $Config
+	 * @throws \Exception
 	 */
-	public function __construct($SwaggerConfig) {
-		$this->_SwaggerConfig = $SwaggerConfig;
+	public function __construct(Config $Config) {
+		$this->_data = $Config;
 		$this->_buildFilters();
 		$this->_buildValidators();
-		if (isset($this->_SwaggerConfig->default)) {
-			$this->setValue($this->_SwaggerConfig->default);
+		if (isset($this->_data->default)) {
+			$this->setValue($this->_data->default);
 		}
-		$this->_Validation = new ValidationStub();
 	}
 
 	/**
 	 * @return string
 	 */
 	public function getName() {
-		return $this->_SwaggerConfig->name;
+		return $this->_data->name;
 	}
 
 	/**
@@ -84,19 +84,11 @@ abstract class ParameterAbstract extends Injectable {
 				throw new \Exception('invalid filter type');
 			}
 		}
+
 		$this->_value = $filteredValue;
 
 		return $this;
 
-	}
-
-	/**
-	 * @return string|null
-	 */
-	public function getDescription() {
-		return isset($this->_SwaggerConfig->description)
-			? $this->_SwaggerConfig->description
-			: null;
 	}
 
 	/**
@@ -113,9 +105,9 @@ abstract class ParameterAbstract extends Injectable {
 		$this->_hasFetched = false;
 		$filters = [];
 
-		$name = $this->_SwaggerConfig->name;
+		$name = $this->_data->name;
 
-		switch ($this->_SwaggerConfig->in) {
+		switch ($this->_data->in) {
 		case 'path':
 			if (array_key_exists($name, $pathParams)) {
 				$this->_hasFetched = true;
@@ -159,13 +151,16 @@ abstract class ParameterAbstract extends Injectable {
 			throw new \Exception('TBI');
 			break;
 		default:
-			throw new \Exception('invalid or not implemented "in" value: ' . $this->_SwaggerConfig->in);
+			throw new \Exception('invalid or not implemented "in" value: ' . $this->_data->in);
 		}
 
 		return $this->_hasFetched;
 
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function isValid() {
 		$this->_validationMessages = [];
 		/** @var Validator $EachValidator */
@@ -177,6 +172,9 @@ abstract class ParameterAbstract extends Injectable {
 		return empty($this->_validationMessages);
 	}
 
+	/**
+	 * @return array
+	 */
 	public function getValidationMessages() {
 		return $this->_validationMessages;
 	}
@@ -197,19 +195,20 @@ abstract class ParameterAbstract extends Injectable {
 	protected function _buildValidators() {
 		$this->_validators = [];
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterRequired
-		if (isset($this->_SwaggerConfig->required) && $this->_SwaggerConfig->required) {
+		if (isset($this->_data->required) && $this->_data->required) {
 			$this->_validators['required'] = $this->SwaggerService->buildValidator('PresenceOf');
 		}
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterEnum
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor76
-		if (isset($this->_SwaggerConfig->enum)) {
-			$enum = $this->_SwaggerConfig->enum;
+		if (isset($this->_data->enum)) {
+			$enum = $this->_data->enum;
 			$this->_validators['enum'] = $this->SwaggerService->buildValidator(
 				'InclusionIn',
 				[
-					'message' => 'expected values to be in ' . implode(',', $enum),
-					'domain' => $enum,
-				]);
+					'message' => 'expected values to be in ' . implode(',', (array)$enum),
+					'domain' => (array) $enum,
+				]
+			);
 		}
 
 

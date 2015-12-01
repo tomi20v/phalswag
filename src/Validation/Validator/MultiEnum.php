@@ -2,6 +2,7 @@
 
 namespace tomi20v\phalswag\Validation\Validator;
 
+use Phalcon\Config;
 use Phalcon\Validation\Validator;
 use Phalcon\Validation\ValidatorInterface;
 use Phalcon\Validation;
@@ -33,13 +34,14 @@ class MultiEnum extends Validator implements ValidatorInterface {
 	 */
 	public function validate(Validation $validator, $attribute) {
 		$value = $validator->getValue($attribute);
+		$enum = $this->_options['enum'];
 		if (!empty($value)) {
 			foreach ($value as $eachValue) {
-				if (!in_array($eachValue, $this->_options['enum'])) {
+				if (!in_array($eachValue, $enum)) {
 					$message = isset($this->_options['message'])
-						? $this->_options['message']
+						? $this->_options['message'] . implode($enum)
 						: 'validation failed';
-					$validator->appendMessage(new \Phalcon\Validation\Message($message, $attribute, 'callback'));
+					$validator->appendMessage(new \Phalcon\Validation\Message($message, $attribute, 'enum'));
 					return false;
 				}
 			}

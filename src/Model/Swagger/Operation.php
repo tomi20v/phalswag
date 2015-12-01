@@ -40,44 +40,4 @@ class Operation extends AbstractItem implements \Iterator {
 		'security' => 'SecurityRequirement',
 	];
 
-	/**
-	 * iterate $this->_SwaggerParameters
-	 * @return mixed
-	 */
- 	public function current() {
-		return current($this->_SwaggerParameters);
-	}
-
-	/**
-	 * iterate $this->_SwaggerParameters
-	 * @return mixed
-	 */
-	public function next() {
-		return next($this->_SwaggerParameters);
-	}
-
-	/**
-	 * iterate $this->_SwaggerParameters
-	 * @return mixed
-	 */
-	public function key() {
-		return key($this->_SwaggerParameters);
-	}
-
-	/**
-	 * iterate $this->_SwaggerParameters
-	 * @return bool
-	 */
-	public function valid() {
-		return !is_null(key($this->_SwaggerParameters));
-	}
-
-	/**
-	 * iterate $this->_SwaggerParameters
-	 * @return mixed
-	 */
-	public function rewind() {
-		return reset($this->_SwaggerParameters);
-	}
-
 }

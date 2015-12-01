@@ -2,6 +2,8 @@
 
 namespace tomi20v\phalswag\Validation;
 
+use Phalcon\Config;
+
 /**
  * Class ValidationValidatorFactory - I am a DI shim so you can replace validators in your tests...
  *
@@ -10,9 +12,9 @@ namespace tomi20v\phalswag\Validation;
 class ValidatorFactory {
 
 	protected $_validatorClasses = [
-		'Callback' => 'tomi20v\\phalswag\\ValidationValidatorCallback',
-		'ArrayEnum' => 'tomi20v\\phalswag\\MultiEnum',
-		'*' => 'Phalcon\\Validation\\Validator\\',
+		'Callback' => 'tomi20v\phalswag\Validation\Validator\Callback',
+		'MultiEnum' => 'tomi20v\phalswag\Validation\Validator\MultiEnum',
+		'*' => 'Phalcon\Validation\Validator\\',
 	];
 
 	/**
@@ -20,7 +22,7 @@ class ValidatorFactory {
 	 * @param array $options
 	 * @return mixed
 	 */
-	public function buildValidator($rule, array $options=[]) {
+	public function buildValidator($rule, array $options = []) {
 		$className = array_key_exists($rule, $this->_validatorClasses)
 			? $this->_validatorClasses[$rule]
 			: $this->_validatorClasses['*'] . $rule;

@@ -21,11 +21,11 @@ class ParameterNumber extends ParameterAbstract {
 		parent::_buildValidators();
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMaximum
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor17
-		if (isset($this->_SwaggerConfig->maximum)) {
-			$maximum = $this->_SwaggerConfig->maximum;
-			$exclusiveMaximum = isset($this->_SwaggerConfig->exclusiveMaximum) && $this->_SwaggerConfig->exclusiveMaximum;
+		if (isset($this->_data->maximum)) {
+			$maximum = $this->_data->maximum;
+			$exclusiveMaximum = isset($this->_data->exclusiveMaximum) && $this->_data->exclusiveMaximum;
 			$this->_validators['maximum'] = $this->ValidatorFactory->buildValidator(
-				'ValidationValidatorCallback',
+				'Callback',
 				[
 					'message' => 'expected to be' . ($exclusiveMaximum ? ' exclusively' : '') . 'less than ' . $maximum,
 					'callback' => function($value) use ($maximum, $exclusiveMaximum) {
@@ -37,13 +37,13 @@ class ParameterNumber extends ParameterAbstract {
 		}
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMinimum
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor21
-		if (isset($this->_SwaggerConfig->minimum)) {
-			$minimum = $this->_SwaggerConfig->minimum;
-			$exclusiveMinimum = isset($this->_SwaggerConfig->exclusiveMinimum) && $this->_SwaggerConfig->exclusiveMinimum;
+		if (isset($this->_data->minimum)) {
+			$minimum = $this->_data->minimum;
+			$exclusiveMinimum = isset($this->_data->exclusiveMinimum) && $this->_data->exclusiveMinimum;
 			$this->_validators['minimum'] = $this->ValidatorFactory->buildValidator(
-				'ValidationValidatorCallback',
+				'Callback',
 				[
-					'message' => 'expected to be' . ($exclusiveMaximum ? ' exclusively' : '') . 'more than ' . $maximum ,
+					'message' => 'expected to be' . ($exclusiveMinimum ? ' exclusively' : '') . 'more than ' . $minimum ,
 					'callback' => function($value) use ($minimum, $exclusiveMinimum) {
 						return $exclusiveMinimum
 							? $value > $minimum
@@ -53,10 +53,10 @@ class ParameterNumber extends ParameterAbstract {
 		}
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMultipleOf
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor14
-		if (isset($this->_SwaggerConfig->multipleOf)) {
-			$multiplerOf = $this->_SwaggerConfig->multipleOf;
+		if (isset($this->_data->multipleOf)) {
+			$multiplerOf = $this->_data->multipleOf;
 			$this->_validators['multipleOf'] = $this->ValidatorFactory->buildValidator(
-				'ValidationValidatorCallback',
+				'Callback',
 				[
 					'message' => 'expected to be multiple of ' . $multiplerOf,
 					'callback' => function($value) use ($multiplerOf) {
@@ -68,7 +68,7 @@ class ParameterNumber extends ParameterAbstract {
 
 	protected function _buildFilters() {
 		parent::_buildFilters();
-		$this->_filters[] = 'float';
+		$this->_filters[] = 'realFloat';
 	}
 
 }

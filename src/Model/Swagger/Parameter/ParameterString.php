@@ -22,8 +22,8 @@ class ParameterString extends ParameterAbstract {
 	protected function _buildValidators() {
 		parent::_buildValidators();
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterFormat
-		if (isset($this->_SwaggerConfig->format)) {
-			switch ($this->_SwaggerConfig->format) {
+		if (isset($this->_data->format)) {
+			switch ($this->_data->format) {
 			case 'date':
 				$this->_validators['date'] = $this->ValidatorFactory->buildValidator(
 					'Regex',
@@ -48,8 +48,8 @@ class ParameterString extends ParameterAbstract {
 		}
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterPattern
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor33
-		if (isset($this->_SwaggerConfig->pattern)) {
-			$pattern = $this->_SwaggerConfig->pattern;
+		if (isset($this->_data->pattern)) {
+			$pattern = $this->_data->pattern;
 			$this->_validators['pattern'] = $this->ValidatorFactory->buildValidator(
 				'Regex',
 				[
@@ -59,8 +59,8 @@ class ParameterString extends ParameterAbstract {
 		}
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMinLength
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor29
-		if (isset($this->_SwaggerConfig->minLength)) {
-			$minLength = $this->_SwaggerConfig->minLength;
+		if (isset($this->_data->minLength)) {
+			$minLength = $this->_data->minLength;
 			$this->_validators['minLength'] = $this->ValidatorFactory->buildValidator(
 				'StringLength',
 				[
@@ -70,8 +70,8 @@ class ParameterString extends ParameterAbstract {
 		}
 		// @see https://github.com/swagger-api/swagger-spec/blob/master/versions/2.0.md#user-content-parameterMaxLength
 		// @see http://json-schema.org/latest/json-schema-validation.html#anchor26
-		if (isset($this->_SwaggerConfig->maxLength)) {
-			$maxLength = $this->_SwaggerConfig->maxLength;
+		if (isset($this->_data->maxLength)) {
+			$maxLength = $this->_data->maxLength;
 			$this->_validators['maxLength'] = $this->ValidatorFactory->buildValidator(
 				'StringLength',
 				[
@@ -83,7 +83,7 @@ class ParameterString extends ParameterAbstract {
 
 	protected function _buildFilters() {
 		parent::_buildFilters();
-		$this->_filters[] = 'string';
+		$this->_filters[] = 'realString';
 	}
 
 }

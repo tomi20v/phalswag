@@ -23,8 +23,8 @@ abstract class AbstractItem implements \Iterator {
 	const CHILD_CLASS_NAMESPACE = 'tomi20v\phalswag';
 
 	protected static $_fields = [];
-
-	protected $_data = [];
+	/** @var Config */
+	protected $_data;
 
 	/**
 	 * @param string $key
@@ -67,7 +67,7 @@ abstract class AbstractItem implements \Iterator {
 	 */
 	public function __construct(Config $data) {
 		$this->_data = $data;
-		$this->_setKeyReference();
+		$this->_setIterableProperties();
 	}
 
 	/**

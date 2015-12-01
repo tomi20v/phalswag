@@ -2,50 +2,71 @@
 
 namespace tomi20v\phalswag\Model\Iterable;
 
+/**
+ * Class ByKeyReferenceTrait - implements an iterator over a preset key set
+ */
 trait ByKeyReferenceTrait {
 
-	private $_fieldsNamesToIterate = [];
+	private $_iterableKeys = [];
 
-	protected function _setKeyReference() {
-		$fieldNamesToIterate = [];
-		foreach (static::$_fields as $eachKey => $eachField) {
-			$fieldName = is_numeric($eachKey) ? $eachField : $eachKey;
+	/**
+	 * will iterate keys in $this->_data which are defined in static::$_fields
+	 */
+	protected function _setIterableProperties() {
+		$propertiesToIterate = [];
+		foreach (static::$_fields as $eachKey => $eachProperty) {
+			$fieldName = is_numeric($eachKey) ? $eachProperty : $eachKey;
 			if (isset($this->_data->$fieldName)) {
-				$fieldNamesToIterate[] = $fieldName;
+				$propertiesToIterate[] = $fieldName;
 			}
 		}
-		$this->_fieldsNamesToIterate = $fieldNamesToIterate;
-		reset($this->_fieldsNamesToIterate);
+		$this->_iterableKeys = $propertiesToIterate;
+		reset($this->_iterableKeys);
 	}
 
+	/**
+	 * @return mixed|null
+	 */
 	public function current()
 	{
 		if ($this->valid()) {
-			$key = current($this->_fieldsNamesToIterate);
+			$key = current($this->_iterableKeys);
 			return $this->_getField($key);
 		}
 		return null;
 	}
 
+	/**
+	 * @return mixed|null
+	 */
 	public function next()
 	{
-		$index = next($this->_fieldsNamesToIterate);
+		$index = next($this->_iterableKeys);
 		return $index === false ? null : $this->_getField($index);
 	}
 
+	/**
+	 * @return mixed
+	 */
 	public function key()
 	{
-		return current($this->_fieldsNamesToIterate);
+		return current($this->_iterableKeys);
 	}
 
+	/**
+	 * @return bool
+	 */
 	public function valid()
 	{
-		return key($this->_fieldsNamesToIterate) !== null;
+		return key($this->_iterableKeys) !== null;
 	}
 
+	/**
+	 * @return mixed|null
+	 */
 	public function rewind()
 	{
-		$key = reset($this->_fieldsNamesToIterate);
+		$key = reset($this->_iterableKeys);
 		return $this->_getField($key);
 	}
 
