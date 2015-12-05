@@ -14,11 +14,24 @@ class ParameterFactory {
 	static $_classTypePattern = '/^[a-zA-Z\_][a-zA-Z0-9\_\-\\\\]*$/';
 
 	/**
-	 * @param string $uglyPart
-	 * @return string
+	 * I build the parameter object, and inject fetch strategy
+	 * @param Config $SwaggerParameter
+	 * @return ParameterAbstract
 	 */
-	public static function _niceClassNamePart($uglyPart) {
-		return ucfirst(strtolower(strtr($uglyPart, '-\\', '__')));
+	public function buildParameter(
+		Config $SwaggerParameter
+	) {
+
+		// @todo if 'in'='body' then expand schema to parameters?
+
+		// @todo I shall expand $ref's first...
+
+		$parameterClassName = $this->_getParameterClassName($SwaggerParameter);
+
+		$Parameter = new $parameterClassName($SwaggerParameter);
+
+		return $Parameter;
+
 	}
 
 	/**
@@ -27,7 +40,7 @@ class ParameterFactory {
 	 * @return string
 	 * @throws \Exception
 	 */
-	protected static function _getParameterClassName(Config $SwaggerParameter) {
+	private function _getParameterClassName(Config $SwaggerParameter) {
 
 		$nameSpacePart = get_called_class();
 		if ($pos = strrpos($nameSpacePart, '\\')) {
@@ -62,24 +75,11 @@ class ParameterFactory {
 	}
 
 	/**
-	 * I build the parameter object, and inject fetch strategy
-	 * @param Config $SwaggerParameter
-	 * @return ParameterAbstract
+	 * @param string $uglyPart
+	 * @return string
 	 */
-	public static function buildParameter(
-		Config $SwaggerParameter
-	) {
-
-		// @todo if 'in'='body' then expand schema to parameters?
-
-		// @todo I shall expand $ref's first...
-
-		$parameterClassName = static::_getParameterClassName($SwaggerParameter);
-
-		$Parameter = new $parameterClassName($SwaggerParameter);
-
-		return $Parameter;
-
+	private function _niceClassNamePart($uglyPart) {
+		return ucfirst(strtolower(strtr($uglyPart, '-\\', '__')));
 	}
 
 }

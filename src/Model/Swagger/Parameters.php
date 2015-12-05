@@ -3,10 +3,11 @@
 namespace tomi20v\phalswag\Model\Swagger;
 
 use Phalcon\Config;
-use tomi20v\phalswag\Model\AbstractCollection;
 
 /**
  * Class Parameters
+ *
+ * @property ParameterFactory $ParameterFactory
  */
 class Parameters extends AbstractCollection {
 
@@ -65,8 +66,19 @@ class Parameters extends AbstractCollection {
 	 * @return ParameterAbstract
 	 */
 	protected function _buildParameters($data) {
-		$data = ParameterFactory::buildParameter($data);
+		$data = $this->_getParameterFactory()->buildParameter($data);
 		return $data;
+	}
+
+	/**
+	 * @return ParameterFactory
+	 */
+	protected function _getParameterFactory() {
+		static $ParameterFactory;
+		if (!$ParameterFactory) {
+			$ParameterFactory = new ParameterFactory();
+		}
+		return $ParameterFactory;
 	}
 
 }

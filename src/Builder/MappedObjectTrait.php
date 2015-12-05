@@ -18,8 +18,6 @@ trait MappedObjectTrait {
 	 */
 	protected function _getMappedObject($key, $className) {
 
-
-
 		if (is_string($className)) {
 			$className = static::CHILD_CLASS_NAMESPACE . '\\' . $className;
 		}

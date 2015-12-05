@@ -5,14 +5,16 @@ namespace tomi20v\phalswag\Model\Swagger\Parameter;
 use Phalcon\Config;
 use tomi20v\phalswag\Exception\SwaggerDefinitionException;
 use tomi20v\phalswag\Model\Swagger\ParameterAbstract;
+use tomi20v\phalswag\Model\Swagger\ParameterFactory;
+use tomi20v\phalswag\Model\Swagger\Swagger;
 
 /**
  * Class ParameterArray
  *
  * @package tomi20v\phalswag
  *
- * @property-read \tomi20v\phalswag\Model\Swagger $Swagger
- * @property-read \tomi20v\phalswag\Model\Swagger\ParameterFactory $ParameterFactory
+ * @property Swagger $Swagger
+ * @property ParameterFactory $ParameterFactory
  */
 class ParameterArray extends ParameterAbstract {
 
@@ -74,7 +76,6 @@ class ParameterArray extends ParameterAbstract {
 		};
 
 		// I'll run each value through the pseudo-param entity's filter by setting the value and getting it back
-//		$ItemsParameterEntity = $this->_getItemsParameterEntity();
 		$ItemParameterSample = $this->ParameterFactory->buildParameter($this->_data->items);
 		$this->_filters[] = function($value) use ($ItemParameterSample) {
 			if (is_array($value)) {
@@ -150,16 +151,5 @@ class ParameterArray extends ParameterAbstract {
 			);
 		}
 	}
-
-//	/**
-//	 * @return ParameterAbstract
-//	 */
-//	protected function _getItemsParameterEntity() {
-//		static $ItemsParameterEntity;
-//		if (is_null($ItemsParameterEntity)) {
-//			$ItemsParameterEntity = $this->ParameterFactory->buildParameter($this->_data->items);
-//		}
-//		return $ItemsParameterEntity;
-//	}
 
 }

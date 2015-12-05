@@ -3,7 +3,6 @@
 namespace tomi20v\phalswag\Service;
 
 use Phalcon\Http\Request;
-
 use Phalcon\Mvc\Model;
 use Phalcon\Validation\ValidatorInterface;
 use tomi20v\phalswag\Exception\InvalidModelForSchemaException;
