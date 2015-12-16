@@ -1,29 +1,34 @@
-phalswag is a component for the Phalcon framework, to validate incoming HTTP request against a swagger.json schema
-the goal is to automate writing REST APIs as much as possible based on swagger definitions
+phalswag is a component for the Phalcon framework, to validate incoming HTTP
+request against a swagger.json schema and also build the corresponding response
+the goal is to automate writing REST APIs as much as possible based on swagger
+definitions
 
-example code:
+simplest example using the supplied Phalcon Mvc Controller extension:
 ```
-class ArticleController extends ControllerBase
+class UsersController extends Controller
+{
+	// by defining these,
+	protected static $_swaggerPath = '../app/config/swagger';
+	protected static $_swaggerFname = 'users.json';
 
-	public function getAction($slug) {
+	public function getAction() {
 
-		$Article = new \Article;
+		try {
 
-		// getArticleBySlug is the operation ID in swagger.json (note path parameter $slug doesn't have to be passed)
-		$Operation = $this->_getBoundSwaggerAction('getArticleBySlug', $Article);
+			$Response = $this->_process(
+				// swagger operation ID
+				'usersGet',
+				// callback which receives input and shall return result data
+				function($RequestModel) {
+					$User = UserModel::findById($RequestModel->id);
+					return $User;
+				}
+			);
 
-		if (!$Operation->isValid()) {
-			$Response = $this->$ResponseBuilder->buildResponse(false, $Operation->getValidationMessages());
 		}
-		else {
+		catch (\Exception $e) {
 
-			// dirty check if record exists, supposing title field is mandatory so it will be set on load
-			$Article->setDirtyState(\Phalcon\Mvc\Model::DIRTY_STATE_PERSISTENT);
-			$Article->refresh();
-
-			$Response = is_null($Article->title)
-				? $this->$ResponseBuilder->buildResponse(false, ['_'=>'404'])
-				: $this->$ResponseBuilder->buildResponse(true, $Article->toArray(null));
+			$Response = $this->ResponseBuilder->buildError(500);
 
 		}
 
@@ -33,5 +38,37 @@ class ArticleController extends ControllerBase
 
 ```
 
-current status: phalswag can validate some type of input but not structures in body. it cannot resolve $ref 's.
+a more complete example would include:
+```
+	// get the operation object
+	$Operation = $this->SwaggerService->getOperationById(
+		$operationId,
+		$this->_Swagger
+	);
 
+	// bind to request model
+	$this->SwaggerService->bindRequest(
+		$RequestModel,
+		$Operation,
+		$this->dispatcher->getParams(),
+		$this->request
+	);
+
+	// get response schema and build from data object
+	$ResponseSchema = $this->SwaggerService->getResponseSchema(
+		200,
+		$Operation,
+		$this->_Swagger
+	);
+	$Result = $this->SwaggerService->buildBySchema(
+		$Object,
+		$ResponseSchema
+	);
+
+```
+
+current status: traversable models for most of swagger definition elements
+can populate a request model (class of your choice) with data from the HTTP
+input. can do basic validation of this data but eg cannot validate
+structures in body. it can build responses from models containing result data.
+it cannot resolve $ref 's.

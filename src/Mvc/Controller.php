@@ -14,7 +14,7 @@ use tomi20v\phalswag\Model\Swagger;
  *
  * @package tomi20v\phalswag
  *
- * @property-read \tomi20v\phalswag\Model\Swagger $Swagger
+ * @property-read \tomi20v\phalswag\Model\Swagger\Swagger $Swagger
  * @property-read \Phalcon\Dispatcher $dispatcher
  * @property \tomi20v\phalswag\Service\SwaggerService SwaggerService
  * @property-read ResponseBuilder ResponseBuilder
@@ -29,9 +29,7 @@ abstract class Controller extends \Phalcon\Mvc\Controller {
 	 */
 	protected static $_swaggerFname;
 
-	/**
-	 * @var \tomi20v\phalswag\Model\Swagger
-	 */
+	/** @var \tomi20v\phalswag\Model\Swagger\Swagger */
 	protected $_Swagger;
 
 	public function onConstruct() {
@@ -46,10 +44,11 @@ abstract class Controller extends \Phalcon\Mvc\Controller {
 
 	/**
 	 * @param $operationId
-	 * @param Model $RequestModel
 	 * @param callable $lambda
+	 * @param Model $RequestModel
 	 * @param callable $responseBuilder
 	 * @return Response
+	 * @throws SwaggerException
 	 */
 	protected function _process(
 		$operationId,
@@ -67,15 +66,15 @@ abstract class Controller extends \Phalcon\Mvc\Controller {
 		}
 
 		$this->SwaggerService->bindRequest($RequestModel, $Operation, $this->dispatcher->getParams(), $this->request);
-		$Result = $this->SwaggerService->validate($RequestModel, $Operation);
+		$ValidationResult = $this->SwaggerService->validate($RequestModel, $Operation);
 
 		if (!is_null($responseBuilder)) {
 			$Response = $responseBuilder(
 				$RequestModel,
-				$Result
+				$ValidationResult
 			);
 		}
-		elseif ($Result->isSuccess()) {
+		elseif ($ValidationResult->isSuccess()) {
 			$Object = $lambda($RequestModel);
 			$ResponseSchema = $this->SwaggerService->getResponseSchema(200, $Operation, $this->_Swagger);
 			$Result = $this->SwaggerService->buildBySchema($Object, $ResponseSchema);
