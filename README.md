@@ -4,7 +4,7 @@ the goal is to automate writing REST APIs as much as possible based on swagger
 definitions
 
 simplest example using the supplied Phalcon Mvc Controller extension:
-```
+```php
 class UsersController extends Controller
 {
 	// by defining these,
@@ -35,36 +35,35 @@ class UsersController extends Controller
 		return $Response;
 
 	}
-
+}
 ```
 
 a more complete example would include:
-```
-	// get the operation object
-	$Operation = $this->SwaggerService->getOperationById(
-		$operationId,
-		$this->_Swagger
-	);
+```php
+// get the operation object
+$Operation = $this->SwaggerService->getOperationById(
+	$operationId,
+	$this->_Swagger
+);
 
-	// bind to request model
-	$this->SwaggerService->bindRequest(
-		$RequestModel,
-		$Operation,
-		$this->dispatcher->getParams(),
-		$this->request
-	);
+// bind to request model
+$this->SwaggerService->bindRequest(
+	$RequestModel,
+	$Operation,
+	$this->dispatcher->getParams(),
+	$this->request
+);
 
-	// get response schema and build from data object
-	$ResponseSchema = $this->SwaggerService->getResponseSchema(
-		200,
-		$Operation,
-		$this->_Swagger
-	);
-	$Result = $this->SwaggerService->buildBySchema(
-		$Object,
-		$ResponseSchema
-	);
-
+// get response schema and build from data object
+$ResponseSchema = $this->SwaggerService->getResponseSchema(
+	200,
+	$Operation,
+	$this->_Swagger
+);
+$Result = $this->SwaggerService->buildBySchema(
+	$Object,
+	$ResponseSchema
+);
 ```
 
 current status: traversable models for most of swagger definition elements
